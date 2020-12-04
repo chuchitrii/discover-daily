@@ -3,11 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './services/guards/auth-guard/auth.guard';
 import { DiscoverComponent } from './components/discover/discover.component';
+import { CallbackComponent } from './components/callback/callback.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'callback', canActivate: [AuthGuard] },
+  { path: 'callback', component: CallbackComponent, canActivate: [AuthGuard] },
   {
     path: 'discover-daily',
     component: DiscoverComponent,
