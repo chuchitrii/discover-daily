@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import {
+  SpotifyAuthRequestQueryParams,
+  SpotifyAuthResponseQueryParams,
+} from '../spotify-auth-query-params-models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  isLoggedIn: BehaviorSubject<boolean>;
-  accessToken: BehaviorSubject<string>;
+  public isLoggedIn$: BehaviorSubject<boolean>;
 
   constructor() {
-    this.isLoggedIn = new BehaviorSubject<boolean>(false);
-    this.accessToken = new BehaviorSubject<string>(null);
+    console.log('initiated');
+    this.isLoggedIn$ = new BehaviorSubject<boolean>(false);
   }
 
   generateRandomString(length): string {
@@ -32,6 +35,7 @@ export class AuthService {
     const scope =
       'user-read-private user-read-email user-library-modify user-library-read playlist-modify-public playlist-modify-private';
     localStorage.setItem(stateKey, state);
+    console.log(localStorage.getItem(stateKey));
 
     let url = 'https://accounts.spotify.com/authorize';
     url += '?response_type=token';
