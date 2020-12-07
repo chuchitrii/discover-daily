@@ -13,20 +13,18 @@ export class DiscoverComponent implements OnInit {
   constructor(private api: SpotifyApiService) {}
 
   ngOnInit(): void {
-    this.getUserProfile();
-    this.getRecommendations();
+    this.getUserProfile().then((res) => this.getRecommendations());
     console.log(this.savedTracks);
   }
 
   async getRecommendations() {
     const result = await this.api.main(this.userId);
-    this.savedTracks = await result.json();
+    this.savedTracks = result;
   }
 
   async getUserProfile() {
     const result = await this.api.getUserProfile();
-    const userProfile = await result.json;
-    console.log(userProfile);
-    this.userId = userProfile.id;
+    console.log(result);
+    this.userId = result.id;
   }
 }
