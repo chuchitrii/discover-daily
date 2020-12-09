@@ -1,13 +1,23 @@
 import { Injectable } from '@angular/core';
 import { SpotifyAuthRequestQueryParams } from '../../models/spotify-query-params-model';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SpotifyApiService {
   access_token: string = null;
-  constructor() {
-    this.access_token = localStorage.getItem('access_token=');
+  apiBase = 'https://api.spotify.com/';
+  headers: HttpHeaders;
+  constructor(private http: HttpClient) {
+    this.access_token = localStorage.getItem('access_token');
+    this.headers = new HttpHeaders({
+      Authorization: 'Bearer ' + this.access_token,
+    });
+  }
+
+  getUserProfile1() {
+    return this.http.get(this.apiBase + 'v1/me', { headers: this.headers });
   }
 
   async getUserProfile() {
@@ -19,6 +29,13 @@ export class SpotifyApiService {
   }
 
   authRequest(queryParams: SpotifyAuthRequestQueryParams) {
+    // @ts-ignore
+    const params = new HttpParams({ fromObject: queryParams });
+    const url = 'https://accounts.spotify.com/authorize?' + params.toString();
+    window.location.href = url;
+  }
+
+  authRequest1(queryParams: SpotifyAuthRequestQueryParams) {
     let url = 'https://accounts.spotify.com/authorize?';
     Object.entries(queryParams).forEach(
       ([key, value]) => (url += '&' + key + value)

@@ -29,8 +29,8 @@ export class AuthService {
 
   redirectToSpotify(): void {
     this.queryParams = new SpotifyAuthRequestQueryParams();
-    this.queryParams['state='] = this.generateRandomString(16);
-    localStorage.setItem('state=', this.queryParams['state=']);
+    this.queryParams.state = this.generateRandomString(16);
+    localStorage.setItem('state', this.queryParams.state);
     this.api.authRequest(this.queryParams);
   }
 }

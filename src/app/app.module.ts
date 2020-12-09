@@ -5,9 +5,10 @@ import { LoginComponent } from './components/login/login.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DiscoverComponent } from './components/discover/discover.component';
 import { CallbackComponent } from './components/callback/callback.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
-  imports: [BrowserModule, AppRoutingModule],
+  imports: [BrowserModule, AppRoutingModule, HttpClientModule],
   declarations: [
     AppComponent,
     LoginComponent,

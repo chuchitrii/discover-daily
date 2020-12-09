@@ -29,11 +29,11 @@ export class CallbackAuthGuard implements CanActivate {
       console.log(1);
       if (
         route.fragment.substr(route.fragment.indexOf('state=') + 6, 16) ===
-        localStorage.getItem('state=')
+        localStorage.getItem('state')
       ) {
         console.log(2);
         localStorage.setItem(
-          'access_token=',
+          'access_token',
           route.fragment.substring(13, route.fragment.indexOf('&'))
         );
         this.auth.isLoggedIn$.next(true);
