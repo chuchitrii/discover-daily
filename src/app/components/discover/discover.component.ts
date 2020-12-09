@@ -4,7 +4,7 @@ import { SpotifyApiService } from '../../services/spotify-api/spotify-api.servic
 @Component({
   selector: 'app-discover',
   templateUrl: './discover.component.html',
-  styleUrls: ['./discover.component.css'],
+  styleUrls: ['./discover.component.scss'],
 })
 export class DiscoverComponent implements OnInit {
   savedTracks: unknown[] = [];
