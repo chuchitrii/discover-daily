@@ -116,5 +116,10 @@
       }
     }
   },
-  "defaultProject": "discover-daily"
+  "defaultProject": "discover-daily",
+  "schematics": {
+    "@schematics/angular:component": {
+      "styleext": "scss"
+    }
+  }
 }
