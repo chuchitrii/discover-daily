@@ -28,8 +28,7 @@ export class SpotifyApiService {
     return promise.json();
   }
 
-  authRequest(queryParams: SpotifyAuthRequestQueryParams) {
-    // @ts-ignore
+  authRequest(queryParams) {
     const params = new HttpParams({ fromObject: queryParams });
     const url = 'https://accounts.spotify.com/authorize?' + params.toString();
     window.location.href = url;
