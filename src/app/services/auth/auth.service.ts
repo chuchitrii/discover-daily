@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import {
-  SpotifyAuthRequestQueryParams,
-  SpotifyAuthResponseQueryParams,
-} from '../../models/spotify-query-params-model';
 import { SpotifyApiService } from '../spotify-api/spotify-api.service';
 
 @Injectable({
@@ -12,7 +8,7 @@ import { SpotifyApiService } from '../spotify-api/spotify-api.service';
 export class AuthService {
   isLoggedIn$: BehaviorSubject<boolean>;
   minTimeBeforeRefresh = 150000;
-  queryParams = {
+  authQueryParams = {
     client_id: '6f1db9ac4bfa4cbc8c11d365774cd6d3',
     response_type: 'token',
     redirect_uri: 'http://localhost:8888/callback',
@@ -36,9 +32,15 @@ export class AuthService {
   }
 
   redirectToSpotify(): void {
-    this.queryParams.state = this.generateRandomString(16);
-    localStorage.setItem('state', this.queryParams.state);
-    this.api.authRequest(this.queryParams);
+    this.authQueryParams.state = this.generateRandomString(16);
+    localStorage.setItem('state', this.authQueryParams.state);
+    this.api.authRequest(this.authQueryParams);
+  }
+
+  removeLocalStorageItems() {
+    ['access_token', 'expires_in', 'accessed_at', 'state'].forEach((value) =>
+      localStorage.removeItem(value)
+    );
   }
 
   isLoggedIn(): boolean {
@@ -51,9 +53,11 @@ export class AuthService {
       ) {
         return true;
       } else {
+        this.removeLocalStorageItems();
         return false;
       }
     } else {
+      this.removeLocalStorageItems();
       return false;
     }
   }

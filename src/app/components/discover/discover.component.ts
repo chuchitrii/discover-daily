@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SpotifyApiService } from '../../services/spotify-api/spotify-api.service';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-discover',
@@ -9,11 +10,16 @@ import { SpotifyApiService } from '../../services/spotify-api/spotify-api.servic
 export class DiscoverComponent implements OnInit {
   savedTracks: unknown[] = [];
   userId: 'string' = null;
+  user: any;
 
   constructor(private api: SpotifyApiService) {}
 
   ngOnInit(): void {
-    this.getUserProfile().then((res) => console.log(res));
+    this.getUserProfile()
+      .pipe(take(1))
+      .subscribe((res) => {
+        this.user = res;
+      });
     // this.getRecommendations());
     // console.log(this.savedTracks);
   }
@@ -23,9 +29,7 @@ export class DiscoverComponent implements OnInit {
     this.savedTracks = result;
   }
 
-  async getUserProfile() {
-    const result = await this.api.getUserProfile();
-    console.log(result);
-    this.userId = result.id;
+  getUserProfile() {
+    return this.api.getUserProfile();
   }
 }
