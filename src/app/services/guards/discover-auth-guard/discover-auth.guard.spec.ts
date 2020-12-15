@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DiscoverGuard } from './discover-auth.guard';
+import { DiscoverAuthGuard } from './discover-auth.guard';
 
-describe('DiscoverGuard', () => {
-  let guard: DiscoverGuard;
+describe('DiscoverAuthGuard', () => {
+  let guard: DiscoverAuthGuard;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    guard = TestBed.inject(DiscoverGuard);
+    guard = TestBed.inject(DiscoverAuthGuard);
   });
 
   it('should be created', () => {

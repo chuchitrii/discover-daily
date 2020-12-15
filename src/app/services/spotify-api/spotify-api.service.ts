@@ -23,7 +23,9 @@ export class SpotifyApiService {
   async getUserProfile() {
     const promise = await fetch(`https://api.spotify.com/v1/me`, {
       method: 'GET',
-      headers: { Authorization: 'Bearer ' + this.access_token },
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+      },
     });
     return promise.json();
   }

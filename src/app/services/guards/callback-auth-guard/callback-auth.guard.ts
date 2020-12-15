@@ -25,24 +25,34 @@ export class CallbackAuthGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    const fragment = route.fragment;
-    const queryParams = new HttpParams({ fromString: fragment });
+    const queryParams = new HttpParams({ fromString: route.fragment });
     console.log(queryParams);
-    if (queryParams.has('error')) {
+
+    if (this.auth.isLoggedIn()) {
+      console.log(1);
+      return this.router.createUrlTree(['/discover-daily']);
     }
-    // if (queryParams.includes('access_token=')) {
-    //   if (
-    //     route.fragment.substr(route.fragment.indexOf('state=') + 6, 16) ===
-    //     localStorage.getItem('state')
-    //   ) {
-    //     localStorage.setItem(
-    //       'access_token',
-    //       route.fragment.substring(13, route.fragment.indexOf('&'))
-    //     );
-    //     this.auth.isLoggedIn$.next(true);
-    //     return this.router.createUrlTree(['/discover-daily']);
-    //   }
-    // }
-    return false;
+
+    if (
+      queryParams.has('access_token') &&
+      queryParams.get('state') === localStorage.getItem('state')
+    ) {
+      console.log(2);
+      localStorage.setItem('access_token', queryParams.get('access_token'));
+      localStorage.setItem('expires_in', queryParams.get('expires_in'));
+      localStorage.setItem('accessed_at', Date.now().toString(10));
+
+      return this.router.createUrlTree(['/discover-daily']);
+    }
+
+    if (queryParams.has('error')) {
+      console.log(3);
+
+      console.error(queryParams.get('error'));
+      return this.router.createUrlTree(['/login']);
+    }
+
+    console.log(4);
+    return this.router.createUrlTree(['/login']);
   }
 }

@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AuthGuard } from './callback-auth.guard';
+import { CallbackAuthGuard } from './callback-auth.guard';
 
-describe('AuthGuard', () => {
-  let guard: AuthGuard;
+describe('CallbackAuthGuard', () => {
+  let guard: CallbackAuthGuard;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    guard = TestBed.inject(AuthGuard);
+    guard = TestBed.inject(CallbackAuthGuard);
   });
 
   it('should be created', () => {
