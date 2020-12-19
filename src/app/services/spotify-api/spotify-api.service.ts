@@ -10,6 +10,8 @@ export class SpotifyApiService {
   access_token: string = null;
   apiBase = 'https://api.spotify.com/';
   headers: HttpHeaders;
+  defaultQ = { offset: 0, limit: 50 };
+
   constructor(private http: HttpClient) {
     this.access_token = localStorage.getItem('access_token');
     this.headers = new HttpHeaders({
@@ -17,21 +19,40 @@ export class SpotifyApiService {
     });
   }
 
-  getUserProfile(): Observable<unknown> {
-    const headers = new HttpHeaders({
+  h(): HttpHeaders {
+    return new HttpHeaders({
       Authorization: 'Bearer ' + localStorage.getItem('access_token'),
     });
-
-    return this.http.get(this.apiBase + 'v1/me', { headers });
   }
 
-  authRequest(queryParams) {
-    const params = new HttpParams({ fromObject: queryParams });
-    const url = 'https://accounts.spotify.com/authorize?' + params.toString();
+  authRequest(queryParams: any): void {
+    const url =
+      'https://accounts.spotify.com/authorize?' +
+      this.q(queryParams).toString();
     window.location.href = url;
   }
 
-  getPlaylists() {}
+  q(input: any): HttpParams {
+    return new HttpParams({ fromObject: input });
+  }
+
+  getUserProfile(): Observable<unknown> {
+    return this.http.get(this.apiBase + 'v1/me', {
+      headers: this.h(),
+    });
+  }
+
+  getPlaylists(
+    userId: string,
+    queryParams: any = { offset: 0, limit: 50 }
+  ): Observable<unknown> {
+    return this.http.get(
+      `${this.apiBase}v1/users/${userId}/playlists?${this.q(queryParams)}`,
+      {
+        headers: this.h(),
+      }
+    );
+  }
 
   async main(userId): Promise<any> {
     const getPlayLists = await fetch(
