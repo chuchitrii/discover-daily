@@ -25,15 +25,21 @@ export class SpotifyApiService {
     });
   }
 
-  authRequest(queryParams: any): void {
+  q(input: any): HttpParams {
+    return new HttpParams({ fromObject: input });
+  }
+
+  authRequest(queryParams: {
+    client_id: string;
+    response_type: string;
+    redirect_uri: string;
+    scope: string;
+    state: string;
+  }): void {
     const url =
       'https://accounts.spotify.com/authorize?' +
       this.q(queryParams).toString();
     window.location.href = url;
-  }
-
-  q(input: any): HttpParams {
-    return new HttpParams({ fromObject: input });
   }
 
   getUserProfile(): Observable<unknown> {
@@ -44,7 +50,7 @@ export class SpotifyApiService {
 
   getPlaylists(
     userId: string,
-    queryParams: any = { offset: 0, limit: 50 }
+    queryParams: { offset: number; limit: number } = this.defaultQ
   ): Observable<unknown> {
     return this.http.get(
       `${this.apiBase}v1/users/${userId}/playlists?${this.q(queryParams)}`,
@@ -52,6 +58,100 @@ export class SpotifyApiService {
         headers: this.h(),
       }
     );
+  }
+
+  getSavedTracks(
+    queryParams: { offset: number; limit: number } = this.defaultQ
+  ): Observable<any> {
+    return this.http.get(`${this.apiBase}v1/me/tracks?${this.q(queryParams)}`, {
+      headers: this.h(),
+    });
+  }
+
+  getAllSavedTracks() {
+    const savedTracks: unknown[] = [];
+    const q = this.defaultQ;
+    let total = 0;
+
+    do {
+      this.getSavedTracks(q)
+        .toPromise()
+        .then((res) => {
+          savedTracks.push(...res.items);
+          total = res.total;
+          q.offset += q.limit;
+        });
+    } while (savedTracks.length < total);
+
+    return savedTracks;
+  }
+
+  getRecommendedTracks(queryParams: {
+    limit: number;
+    seed_tracks: string[];
+  }): Observable<any> {
+    return this.http.get(
+      `${this.apiBase}v1/recommendations?${this.q(queryParams)}`,
+      {
+        headers: this.h(),
+      }
+    );
+  }
+
+  getFilterMask(queryParams: { ids: string }): Observable<any> {
+    return this.http.get(
+      `${this.apiBase}v1/me/tracks/contains?${this.q(queryParams)}`,
+      {
+        headers: this.h(),
+      }
+    );
+  }
+
+  getAllRecommendedTracks(savedTracks, count = 30): unknown[] {
+    const q = { limit: 5, seed_tracks: [] };
+    const length = 5;
+    const recommendedTracks: unknown[] = [];
+    const requestArray: unknown[] = [];
+    let tempTracks = [];
+
+    do {
+      q.seed_tracks = Array(length)
+        .fill(null)
+        .map(() => savedTracks[this.getRandomInt(savedTracks.length)].track.id);
+
+      this.getRecommendedTracks(q)
+        .toPromise()
+        .then((res) => {
+          return res.tracks;
+        })
+        .then((tracks) => {
+          tempTracks = tracks;
+          return this.getFilterMask({
+            ids: tracks.map((t) => t.id),
+          });
+        })
+        .then((mask) => {
+          return tempTracks.filter((x, i) => !mask[i]);
+        })
+        .then((filtered) => {
+          recommendedTracks.push(...filtered);
+        });
+    } while (recommendedTracks.length < count);
+    return recommendedTracks;
+  }
+
+  postTracksToPlaylist() {}
+
+  async addTracksToPlaylist(playlistId, tracksURIs) {
+    const seed_tracks = tracksURIs.join(',');
+    const promise = await fetch(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks?uris=${seed_tracks}`,
+      {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + this.access_token },
+      }
+    );
+    return promise.json();
   }
 
   async main(userId): Promise<any> {
@@ -92,90 +192,6 @@ export class SpotifyApiService {
     const ai = await this.addTracksToPlaylist(playlistId, filteredURIs);
 
     return filtered;
-  }
-
-  async fetchSavedTracks(limit, offset) {
-    const promise = await fetch(
-      `https://api.spotify.com/v1/me/tracks?limit=${limit}&offset=${offset}`,
-      {
-        method: 'GET',
-        headers: { Authorization: 'Bearer ' + this.access_token },
-      }
-    );
-    return promise.json();
-  }
-
-  async fetchRecommendedTracks(limit, seedTracksArr) {
-    const seed_tracks = seedTracksArr.join('%2C');
-    const promise = await fetch(
-      `https://api.spotify.com/v1/recommendations?limit=${limit}&seed_tracks=${seed_tracks}`,
-      {
-        method: 'GET',
-        headers: { Authorization: 'Bearer ' + this.access_token },
-      }
-    );
-    return promise.json();
-  }
-
-  async getAllSavedTracks() {
-    const fetchedSavedTracks = [];
-    let offset = 0;
-    const limit = 50;
-    const response = await this.fetchSavedTracks(1, 0);
-    const totalSavedTracks = response.total;
-    while (fetchedSavedTracks.length < totalSavedTracks) {
-      const response = await this.fetchSavedTracks(limit, offset);
-      fetchedSavedTracks.push(...response.items);
-      console.log(fetchedSavedTracks);
-      offset += limit;
-    }
-
-    return fetchedSavedTracks;
-  }
-
-  async getRecommendedTracks(allSavedTracks) {
-    const indexArray = [];
-    const tracksArray = [];
-    const recommendedTracks = [];
-
-    for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < 5; j++) {
-        indexArray[j] = this.getRandomInt(allSavedTracks.length);
-      }
-      indexArray.forEach((value, index) => {
-        tracksArray[index] = allSavedTracks[value].track.id;
-      });
-      const response = await this.fetchRecommendedTracks(10, tracksArray);
-      recommendedTracks.push(...response.tracks);
-    }
-    console.log(recommendedTracks);
-    return recommendedTracks;
-  }
-
-  async addTracksToPlaylist(playlistId, tracksURIs) {
-    const seed_tracks = tracksURIs.join(',');
-    const promise = await fetch(
-      `https://api.spotify.com/v1/playlists/${playlistId}/tracks?uris=${seed_tracks}`,
-      {
-        method: 'POST',
-        headers: { Authorization: 'Bearer ' + this.access_token },
-      }
-    );
-    return promise.json();
-  }
-
-  async filterSavedTracks(tracks, tracksIds) {
-    const seed_tracks = tracksIds.join('%2C');
-    const promise = await fetch(
-      `https://api.spotify.com/v1/me/tracks/contains?ids=${seed_tracks}`,
-      {
-        method: 'GET',
-        headers: { Authorization: 'Bearer ' + this.access_token },
-      }
-    );
-    const mask = await promise.json();
-    console.log(mask);
-    return tracks.filter((x, i) => !mask[i]);
   }
 
   getRandomInt(max) {
