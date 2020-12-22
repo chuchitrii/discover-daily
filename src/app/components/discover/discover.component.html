@@ -1,7 +1,7 @@
 <div>
   <span>{{user.display_name}}</span>
 </div>
-
+<button (click)="getRecommendedTracks()">Recommend</button>
 <div *ngFor="let track of savedTracks">
-  {{track}}
+  {{track.id}}
 </div>

@@ -45,18 +45,22 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     if (localStorage.getItem('access_token')) {
+      console.log('s', 0);
       if (
         this.minTimeBeforeRefresh <
         Number(localStorage.getItem('accessed_at')) +
           Number(localStorage.getItem('expires_in') + '000') -
           Date.now()
       ) {
+        console.log('s', 1);
         return true;
       } else {
+        console.log('s', 2);
         this.removeLocalStorageItems();
         return false;
       }
     } else {
+      console.log('s', 3);
       this.removeLocalStorageItems();
       return false;
     }

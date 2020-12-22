@@ -68,8 +68,8 @@ export class SpotifyApiService {
     });
   }
 
-  getAllSavedTracks() {
-    const savedTracks: unknown[] = [];
+  async getAllSavedTracks() {
+    const savedTracks: any[] = [];
     const q = this.defaultQ;
     let total = 0;
 
@@ -99,13 +99,15 @@ export class SpotifyApiService {
   }
 
   filterTracks(tracks) {
+    let mask;
     this.getFilterMask({
       ids: tracks.map((t) => t.id),
     })
       .toPromise()
-      .then((mask) => {
-        return tracks.filter((x, i) => !mask[i]);
+      .then((m) => {
+        mask = m;
       });
+    return tracks.filter((x, i) => !mask[i]);
   }
 
   getFilterMask(queryParams: { ids: string }): Observable<any> {
@@ -117,14 +119,12 @@ export class SpotifyApiService {
     );
   }
 
-  getAllRecommendedTracks(savedTracks, count = 30): unknown[] {
+  getAllRecommendedTracks(savedTracks, count = 30) {
     const q = { limit: 5, seed_tracks: [] };
     const length = 5;
-    const recommendedTracks: unknown[] = [];
-    const requestArray: unknown[] = [];
-    const tempTracks = [];
-
+    const recommendedTracks: any[] = [];
     do {
+      console.log(savedTracks[0]);
       q.seed_tracks = Array(length)
         .fill(null)
         .map(() => savedTracks[this.getRandomInt(savedTracks.length)].track.id);

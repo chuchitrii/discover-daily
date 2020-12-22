@@ -8,6 +8,7 @@ import { take } from 'rxjs/operators';
   styleUrls: ['./discover.component.scss'],
 })
 export class DiscoverComponent implements OnInit {
+  recommendedTracks: unknown[] = [];
   savedTracks: unknown[] = [];
   userId: 'string' = null;
   user: any;
@@ -24,9 +25,11 @@ export class DiscoverComponent implements OnInit {
     // console.log(this.savedTracks);
   }
 
-  async getRecommendations() {
-    const result = await this.api.main(this.userId);
-    this.savedTracks = result;
+  async getRecommendedTracks() {
+    this.api.getAllSavedTracks().then((st) => {
+      console.log(st);
+      this.recommendedTracks = this.api.getAllRecommendedTracks(st);
+    });
   }
 
   getUserProfile() {

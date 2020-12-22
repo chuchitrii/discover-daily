@@ -26,18 +26,16 @@ export class CallbackAuthGuard implements CanActivate {
     | boolean
     | UrlTree {
     const queryParams = new HttpParams({ fromString: route.fragment });
-    console.log(queryParams);
+    const qState = queryParams.get('state');
+    const lState = localStorage.getItem('state');
 
     if (this.auth.isLoggedIn()) {
-      console.log(1);
+      console.log('g', 1);
       return this.router.createUrlTree(['/discover-daily']);
     }
 
-    if (
-      queryParams.has('access_token') &&
-      queryParams.get('state') === localStorage.getItem('state')
-    ) {
-      console.log(2);
+    if (queryParams.has('access_token') && lState === qState) {
+      console.log('g', 2);
       localStorage.setItem('access_token', queryParams.get('access_token'));
       localStorage.setItem('expires_in', queryParams.get('expires_in'));
       localStorage.setItem('accessed_at', Date.now().toString(10));
@@ -46,13 +44,13 @@ export class CallbackAuthGuard implements CanActivate {
     }
 
     if (queryParams.has('error')) {
-      console.log(3);
+      console.log('g', 3);
 
       console.error(queryParams.get('error'));
       return this.router.createUrlTree(['/login']);
     }
 
-    console.log(4);
+    console.log('g', 4);
     return this.router.createUrlTree(['/login']);
   }
 }

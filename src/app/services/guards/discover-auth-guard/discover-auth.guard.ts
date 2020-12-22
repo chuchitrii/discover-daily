@@ -19,6 +19,7 @@ export class DiscoverAuthGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
+    console.log(1);
     return true;
   }
 }
