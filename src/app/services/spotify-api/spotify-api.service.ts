@@ -98,6 +98,16 @@ export class SpotifyApiService {
     );
   }
 
+  filterTracks(tracks) {
+    this.getFilterMask({
+      ids: tracks.map((t) => t.id),
+    })
+      .toPromise()
+      .then((mask) => {
+        return tracks.filter((x, i) => !mask[i]);
+      });
+  }
+
   getFilterMask(queryParams: { ids: string }): Observable<any> {
     return this.http.get(
       `${this.apiBase}v1/me/tracks/contains?${this.q(queryParams)}`,
@@ -112,7 +122,7 @@ export class SpotifyApiService {
     const length = 5;
     const recommendedTracks: unknown[] = [];
     const requestArray: unknown[] = [];
-    let tempTracks = [];
+    const tempTracks = [];
 
     do {
       q.seed_tracks = Array(length)
@@ -122,19 +132,9 @@ export class SpotifyApiService {
       this.getRecommendedTracks(q)
         .toPromise()
         .then((res) => {
-          return res.tracks;
-        })
-        .then((tracks) => {
-          tempTracks = tracks;
-          return this.getFilterMask({
-            ids: tracks.map((t) => t.id),
+          this.filterTracks(res.tracks).then((filtered) => {
+            recommendedTracks.push(...filtered);
           });
-        })
-        .then((mask) => {
-          return tempTracks.filter((x, i) => !mask[i]);
-        })
-        .then((filtered) => {
-          recommendedTracks.push(...filtered);
         });
     } while (recommendedTracks.length < count);
     return recommendedTracks;
@@ -152,46 +152,6 @@ export class SpotifyApiService {
       }
     );
     return promise.json();
-  }
-
-  async main(userId): Promise<any> {
-    const getPlayLists = await fetch(
-      `https://api.spotify.com/v1/users/${userId}/playlists?offset=0&limit=50`,
-      {
-        method: 'GET',
-        headers: { Authorization: 'Bearer ' + this.access_token },
-        // json: true
-      }
-    );
-    const playlists = await getPlayLists.json();
-    const playlistId =
-      playlists.items[
-        playlists.items.findIndex((p) => p.name === 'Discover Daily')
-      ].id;
-
-    const recommendedIds = [];
-    const filteredURIs = [];
-
-    const savedTracks = await this.getAllSavedTracks();
-    console.log(savedTracks);
-
-    const recommended = await this.getRecommendedTracks(savedTracks);
-    console.log(recommended);
-
-    recommended.forEach((v, i) => {
-      recommendedIds[i] = v.id;
-    });
-
-    const filtered = await this.filterSavedTracks(recommended, recommendedIds);
-    console.log(filtered);
-
-    filtered.forEach((x, i) => {
-      filteredURIs[i] = x.uri;
-    });
-
-    const ai = await this.addTracksToPlaylist(playlistId, filteredURIs);
-
-    return filtered;
   }
 
   getRandomInt(max) {
