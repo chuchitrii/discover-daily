@@ -68,24 +68,6 @@ export class SpotifyApiService {
     });
   }
 
-  async getAllSavedTracks() {
-    const savedTracks: any[] = [];
-    const q = this.defaultQ;
-    let total = 0;
-
-    do {
-      this.getSavedTracks(q)
-        .toPromise()
-        .then((res) => {
-          savedTracks.push(...res.items);
-          total = res.total;
-          q.offset += q.limit;
-        });
-    } while (savedTracks.length < total);
-
-    return savedTracks;
-  }
-
   getRecommendedTracks(queryParams: {
     limit: number;
     seed_tracks: string[];

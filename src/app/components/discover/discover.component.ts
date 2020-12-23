@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SpotifyApiService } from '../../services/spotify-api/spotify-api.service';
 import { take } from 'rxjs/operators';
+import { DiscoverService } from '../../services/discover/discover.service';
 
 @Component({
   selector: 'app-discover',
@@ -13,7 +14,7 @@ export class DiscoverComponent implements OnInit {
   userId: 'string' = null;
   user: any;
 
-  constructor(private api: SpotifyApiService) {}
+  constructor(private ds: DiscoverService, private api: SpotifyApiService) {}
 
   ngOnInit(): void {
     this.getUserProfile()
@@ -25,10 +26,10 @@ export class DiscoverComponent implements OnInit {
     // console.log(this.savedTracks);
   }
 
-  async getRecommendedTracks() {
-    this.api.getAllSavedTracks().then((st) => {
-      console.log(st);
-      this.recommendedTracks = this.api.getAllRecommendedTracks(st);
+  getRecommendedTracks() {
+    this.ds.getAllSavedTracks().then((res) => {
+      console.log(res);
+      this.savedTracks = res;
     });
   }
 
