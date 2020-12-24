@@ -47,9 +47,9 @@ export class SpotifyApiService {
   }
 
   getPlaylists(
-    queryParams: { offset: number; limit: number } = this.defaultQ,
-    userId: string
-  ): Observable<unknown> {
+    userId: string,
+    queryParams: { offset: number; limit: number } = this.defaultQ
+  ): Observable<any> {
     return this.http.get(`${this.apiBase}v1/users/${userId}/playlists?${this.q(queryParams)}`, {
       headers: this.h(),
     });

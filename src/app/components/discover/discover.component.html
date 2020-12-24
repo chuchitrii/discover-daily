@@ -2,6 +2,7 @@
   <span>{{user?.display_name}}</span>
 </div>
 <button (click)="getRecommendedTracks()">Recommend</button>
-<div *ngFor="let track of savedTracks">
-  {{track.track.id}}
+<button (click)="addTracksToPlaylist()">Add</button>
+<div *ngFor="let track of recommendedTracks">
+  {{track.artists[0].name}} – {{track.name}}
 </div>

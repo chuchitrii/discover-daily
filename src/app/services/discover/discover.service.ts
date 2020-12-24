@@ -9,9 +9,38 @@ export class DiscoverService {
 
   constructor(private api: SpotifyApiService) {}
 
+  async getRecommendation() {
+    const savedTracks = await this.getAllSavedTracks();
+    const recommendedTracks = await this.getAllRecommendedTracks(savedTracks);
+    return recommendedTracks;
+  }
+
+  async addTracksToPlaylist(recommendedTracks, user) {
+    const queryParams = { uris: [] };
+    recommendedTracks.map((x, i) => {
+      queryParams.uris[i] = x.uri;
+    });
+    const userId = user.id;
+    const playlistId = await this.findDiscoverPlaylist(userId);
+    this.api.postTracksToPlaylist(queryParams, playlistId);
+  }
+
   async getUserProfile() {
     const user = await this.api.getUserProfile();
     return user;
+  }
+
+  async getUserPlaylists(userId): Promise<any> {
+    const playlists = await this.api.getPlaylists(userId);
+    return playlists;
+  }
+
+  async findDiscoverPlaylist(userId) {
+    console.log(userId);
+    const playlists = await this.getUserPlaylists(userId);
+    console.log(playlists);
+    const playlistId = playlists.items[playlists.items.findIndex((p) => p.name === 'Discover Daily')].id;
+    return playlistId;
   }
 
   async getAllSavedTracks() {
@@ -50,8 +79,6 @@ export class DiscoverService {
     const mask = await this.api.getFilterMask(queryParams).toPromise();
     return tracks.filter((x, i) => !mask[i]);
   }
-
-  getPlaylist() {}
 
   getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
