@@ -11,19 +11,12 @@ import { DiscoverService } from '../../services/discover/discover.service';
 export class DiscoverComponent implements OnInit {
   recommendedTracks: unknown[] = [];
   savedTracks: unknown[] = [];
-  userId: 'string' = null;
   user: any;
 
   constructor(private ds: DiscoverService, private api: SpotifyApiService) {}
 
   ngOnInit(): void {
-    this.getUserProfile()
-      .pipe(take(1))
-      .subscribe((res) => {
-        this.user = res;
-      });
-    // this.getRecommendations());
-    // console.log(this.savedTracks);
+    this.ds.getUserProfile().then((user) => (this.user = user));
   }
 
   getRecommendedTracks() {
@@ -31,9 +24,5 @@ export class DiscoverComponent implements OnInit {
       console.log(res);
       this.savedTracks = res;
     });
-  }
-
-  getUserProfile() {
-    return this.api.getUserProfile();
   }
 }

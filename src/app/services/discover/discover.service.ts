@@ -9,6 +9,11 @@ export class DiscoverService {
 
   constructor(private api: SpotifyApiService) {}
 
+  async getUserProfile() {
+    const user = await this.api.getUserProfile();
+    return user;
+  }
+
   async getAllSavedTracks() {
     const savedTracks: any[] = [];
     const q = this.defaultQ;
@@ -25,9 +30,30 @@ export class DiscoverService {
     return savedTracks;
   }
 
+  async getAllRecommendedTracks(savedTracks, count = 30) {
+    const q = { limit: 5, seed_tracks: [] };
+    const length = 5;
+    const recommendedTracks: any[] = [];
+    do {
+      q.seed_tracks = Array(length)
+        .fill(null)
+        .map(() => savedTracks[this.getRandomInt(savedTracks.length)].track.id);
+      const res = await this.api.getRecommendedTracks(q).toPromise();
+      const filtered = await this.filterTracks(res.tracks);
+      recommendedTracks.push(...filtered);
+    } while (recommendedTracks.length < count);
+    return recommendedTracks;
+  }
+
   async filterTracks(tracks) {
     const queryParams = { ids: tracks.map((t) => t.id) };
     const mask = await this.api.getFilterMask(queryParams).toPromise();
     return tracks.filter((x, i) => !mask[i]);
+  }
+
+  getPlaylist() {}
+
+  getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
   }
 }

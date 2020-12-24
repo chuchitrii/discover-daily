@@ -36,9 +36,7 @@ export class SpotifyApiService {
     scope: string;
     state: string;
   }): void {
-    const url =
-      'https://accounts.spotify.com/authorize?' +
-      this.q(queryParams).toString();
+    const url = 'https://accounts.spotify.com/authorize?' + this.q(queryParams).toString();
     window.location.href = url;
   }
 
@@ -49,94 +47,35 @@ export class SpotifyApiService {
   }
 
   getPlaylists(
-    userId: string,
-    queryParams: { offset: number; limit: number } = this.defaultQ
+    queryParams: { offset: number; limit: number } = this.defaultQ,
+    userId: string
   ): Observable<unknown> {
-    return this.http.get(
-      `${this.apiBase}v1/users/${userId}/playlists?${this.q(queryParams)}`,
-      {
-        headers: this.h(),
-      }
-    );
+    return this.http.get(`${this.apiBase}v1/users/${userId}/playlists?${this.q(queryParams)}`, {
+      headers: this.h(),
+    });
   }
 
-  getSavedTracks(
-    queryParams: { offset: number; limit: number } = this.defaultQ
-  ): Observable<any> {
+  getSavedTracks(queryParams: { offset: number; limit: number } = this.defaultQ): Observable<any> {
     return this.http.get(`${this.apiBase}v1/me/tracks?${this.q(queryParams)}`, {
       headers: this.h(),
     });
   }
 
-  getRecommendedTracks(queryParams: {
-    limit: number;
-    seed_tracks: string[];
-  }): Observable<any> {
-    return this.http.get(
-      `${this.apiBase}v1/recommendations?${this.q(queryParams)}`,
-      {
-        headers: this.h(),
-      }
-    );
+  getRecommendedTracks(queryParams: { limit: number; seed_tracks: string[] }): Observable<any> {
+    return this.http.get(`${this.apiBase}v1/recommendations?${this.q(queryParams)}`, {
+      headers: this.h(),
+    });
   }
 
-  filterTracks(tracks) {
-    let mask;
-    this.getFilterMask({
-      ids: tracks.map((t) => t.id),
-    })
-      .toPromise()
-      .then((m) => {
-        mask = m;
-      });
-    return tracks.filter((x, i) => !mask[i]);
+  getFilterMask(queryParams: { ids: string[] }): Observable<any> {
+    return this.http.get(`${this.apiBase}v1/me/tracks/contains?${this.q(queryParams)}`, {
+      headers: this.h(),
+    });
   }
 
-  getFilterMask(queryParams: { ids: string }): Observable<any> {
-    return this.http.get(
-      `${this.apiBase}v1/me/tracks/contains?${this.q(queryParams)}`,
-      {
-        headers: this.h(),
-      }
-    );
-  }
-
-  getAllRecommendedTracks(savedTracks, count = 30) {
-    const q = { limit: 5, seed_tracks: [] };
-    const length = 5;
-    const recommendedTracks: any[] = [];
-    do {
-      console.log(savedTracks[0]);
-      q.seed_tracks = Array(length)
-        .fill(null)
-        .map(() => savedTracks[this.getRandomInt(savedTracks.length)].track.id);
-
-      this.getRecommendedTracks(q)
-        .toPromise()
-        .then((res) => {
-          this.filterTracks(res.tracks).then((filtered) => {
-            recommendedTracks.push(...filtered);
-          });
-        });
-    } while (recommendedTracks.length < count);
-    return recommendedTracks;
-  }
-
-  postTracksToPlaylist() {}
-
-  async addTracksToPlaylist(playlistId, tracksURIs) {
-    const seed_tracks = tracksURIs.join(',');
-    const promise = await fetch(
-      `https://api.spotify.com/v1/playlists/${playlistId}/tracks?uris=${seed_tracks}`,
-      {
-        method: 'POST',
-        headers: { Authorization: 'Bearer ' + this.access_token },
-      }
-    );
-    return promise.json();
-  }
-
-  getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
+  postTracksToPlaylist(queryParams: { uris: string[] }, playlistId: string): Observable<any> {
+    return this.http.post(`${this.apiBase}v1/playlists/${playlistId}/tracks?${this.q(queryParams)}`, {
+      headers: this.h(),
+    });
   }
 }
