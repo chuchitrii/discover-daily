@@ -74,12 +74,8 @@ export class SpotifyApiService {
   }
 
   postTracksToPlaylist(queryParams: { uris: string[] }, playlistId: string): Observable<any> {
-    return this.http.post(
-      `${this.apiBase}v1/playlists/${playlistId}/tracks?uris=${queryParams.uris.join(',')}`,
-      {},
-      {
-        headers: this.h(),
-      }
-    );
+    return this.http.post(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, queryParams, {
+      headers: this.h(),
+    });
   }
 }
