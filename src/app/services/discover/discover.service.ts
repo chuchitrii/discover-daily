@@ -16,22 +16,26 @@ export class DiscoverService {
   }
 
   async addTracksToPlaylist(recommendedTracks, user) {
+    console.log(user);
     const queryParams = { uris: [] };
     recommendedTracks.map((x, i) => {
       queryParams.uris[i] = x.uri;
     });
     const userId = user.id;
     const playlistId = await this.findDiscoverPlaylist(userId);
-    this.api.postTracksToPlaylist(queryParams, playlistId);
+    console.log(playlistId);
+    const res = await this.api.postTracksToPlaylist(queryParams, playlistId).toPromise();
+    console.log(res);
   }
 
   async getUserProfile() {
-    const user = await this.api.getUserProfile();
+    const user = await this.api.getUserProfile().toPromise();
+    console.log(user);
     return user;
   }
 
   async getUserPlaylists(userId): Promise<any> {
-    const playlists = await this.api.getPlaylists(userId);
+    const playlists = await this.api.getPlaylists(userId).toPromise();
     return playlists;
   }
 

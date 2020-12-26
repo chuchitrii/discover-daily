@@ -40,7 +40,7 @@ export class SpotifyApiService {
     window.location.href = url;
   }
 
-  getUserProfile(): Observable<unknown> {
+  getUserProfile(): Observable<any> {
     return this.http.get(this.apiBase + 'v1/me', {
       headers: this.h(),
     });
@@ -74,8 +74,12 @@ export class SpotifyApiService {
   }
 
   postTracksToPlaylist(queryParams: { uris: string[] }, playlistId: string): Observable<any> {
-    return this.http.post(`${this.apiBase}v1/playlists/${playlistId}/tracks?${this.q(queryParams)}`, {
-      headers: this.h(),
-    });
+    return this.http.post(
+      `${this.apiBase}v1/playlists/${playlistId}/tracks?uris=${queryParams.uris.join(',')}`,
+      {},
+      {
+        headers: this.h(),
+      }
+    );
   }
 }
