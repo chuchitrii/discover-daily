@@ -72,6 +72,7 @@ export class DiscoverService {
         .fill(null)
         .map(() => savedTracks[this.getRandomInt(savedTracks.length)].track.id);
       const res = await this.api.getRecommendedTracks(q).toPromise();
+      console.log(res);
       const filtered = await this.filterTracks(res.tracks);
       recommendedTracks.push(...filtered);
     } while (recommendedTracks.length < count);
@@ -81,6 +82,7 @@ export class DiscoverService {
   async filterTracks(tracks) {
     const queryParams = { ids: tracks.map((t) => t.id) };
     const mask = await this.api.getFilterMask(queryParams).toPromise();
+    console.log(mask);
     return tracks.filter((x, i) => !mask[i]);
   }
 

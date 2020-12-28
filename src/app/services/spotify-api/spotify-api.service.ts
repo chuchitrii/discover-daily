@@ -62,13 +62,18 @@ export class SpotifyApiService {
   }
 
   getRecommendedTracks(queryParams: { limit: number; seed_tracks: string[] }): Observable<any> {
-    return this.http.get(`${this.apiBase}v1/recommendations?${this.q(queryParams)}`, {
-      headers: this.h(),
-    });
+    return this.http.get(
+      `${this.apiBase}v1/recommendations?limit=${
+        queryParams.limit
+      }&seed_tracks=${queryParams.seed_tracks.join(',')}`,
+      {
+        headers: this.h(),
+      }
+    );
   }
 
   getFilterMask(queryParams: { ids: string[] }): Observable<any> {
-    return this.http.get(`${this.apiBase}v1/me/tracks/contains?${this.q(queryParams)}`, {
+    return this.http.get(`${this.apiBase}v1/me/tracks/contains?ids=${queryParams.ids.join(',')}`, {
       headers: this.h(),
     });
   }
