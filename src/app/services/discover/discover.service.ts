@@ -15,7 +15,7 @@ export class DiscoverService {
     return recommendedTracks;
   }
 
-  async addTracksToPlaylist(recommendedTracks, user, playlistId?: string, clear?: boolean) {
+  async addTracksToPlaylist(recommendedTracks, user, clear: boolean, playlistId?: string) {
     let playlist;
     const queryParams = { uris: [] };
     recommendedTracks.map((x, i) => {
@@ -30,7 +30,6 @@ export class DiscoverService {
       playlist = await this.api.createPlaylist(body, user).toPromise();
       playlistId = playlist.id;
     }
-
     if (clear) {
     }
     console.log(playlistId);

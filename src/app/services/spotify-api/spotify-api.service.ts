@@ -104,4 +104,6 @@ export class SpotifyApiService {
       headers,
     });
   }
+
+  removeTracksFromPlaylist() {}
 }
