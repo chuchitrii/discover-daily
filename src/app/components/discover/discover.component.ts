@@ -12,6 +12,7 @@ export class DiscoverComponent implements OnInit {
   recommendedTracks: unknown[] = [];
   savedTracks: unknown[] = [];
   user: any;
+  playlistId: string;
 
   constructor(private ds: DiscoverService, private api: SpotifyApiService) {}
 
@@ -30,6 +31,14 @@ export class DiscoverComponent implements OnInit {
   }
 
   addTracksToPlaylist() {
-    this.ds.addTracksToPlaylist(this.recommendedTracks, this.user);
+    this.ds.addTracksToPlaylist(this.recommendedTracks, this.user).then((res) => {});
+  }
+
+  findPlaylist() {
+    this.ds.findDiscoverPlaylist(this.user).then((pl) => {
+      if (pl) {
+        this.playlistId = pl;
+      }
+    });
   }
 }

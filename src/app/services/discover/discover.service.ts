@@ -15,36 +15,70 @@ export class DiscoverService {
     return recommendedTracks;
   }
 
-  async addTracksToPlaylist(recommendedTracks, user) {
-    console.log(user);
+  async addTracksToPlaylist(recommendedTracks, user, playlistId?: string, clear?: boolean) {
+    let playlist;
     const queryParams = { uris: [] };
     recommendedTracks.map((x, i) => {
       queryParams.uris[i] = x.uri;
     });
-    const userId = user.id;
-    const playlistId = await this.findDiscoverPlaylist(userId);
+
+    if (!playlistId) {
+      const body = {
+        name: 'Discover Daily',
+        description: 'Created with «Discover Daily»',
+      };
+      playlist = await this.api.createPlaylist(body, user).toPromise();
+      playlistId = playlist.id;
+    }
+
+    if (clear) {
+    }
     console.log(playlistId);
     const res = await this.api.postTracksToPlaylist(queryParams, playlistId).toPromise();
-    console.log(res);
+
+    return res;
   }
+
+  async clearPlaylist() {}
 
   async getUserProfile() {
     const user = await this.api.getUserProfile().toPromise();
-    console.log(user);
     return user;
   }
 
-  async getUserPlaylists(userId): Promise<any> {
+  async getUserPlaylists(
+    userId: string,
+    queryParams: { offset: number; limit: number } = this.defaultQ
+  ): Promise<any> {
     const playlists = await this.api.getPlaylists(userId).toPromise();
     return playlists;
   }
 
-  async findDiscoverPlaylist(userId) {
+  async getAllPlaylists(userId) {
+    const playlists = [];
+    const q = {
+      offset: 0,
+      limit: 50,
+    };
+    let total;
+
+    do {
+      const res = await this.getUserPlaylists(userId, q);
+      playlists.push(...res.items);
+      q.offset += q.limit;
+      total = res.total;
+    } while (playlists.length < total);
+
+    return playlists;
+  }
+
+  async findDiscoverPlaylist(user): Promise<string> {
+    const userId = user.id;
     console.log(userId);
-    const playlists = await this.getUserPlaylists(userId);
+    const playlists = await this.getAllPlaylists(userId);
     console.log(playlists);
-    const playlistId = playlists.items[playlists.items.findIndex((p) => p.name === 'Discover Daily')].id;
-    return playlistId;
+
+    return playlists[playlists.findIndex((p) => p.name === 'Discover Daily')].id;
   }
 
   async getAllSavedTracks() {
@@ -54,7 +88,6 @@ export class DiscoverService {
 
     do {
       const res = await this.api.getSavedTracks(q).toPromise();
-      console.log(res);
       savedTracks.push(...res.items);
       total = res.total;
       q.offset += q.limit;
@@ -67,22 +100,23 @@ export class DiscoverService {
     const q = { limit: 5, seed_tracks: [] };
     const length = 5;
     const recommendedTracks: any[] = [];
+
     do {
       q.seed_tracks = Array(length)
         .fill(null)
         .map(() => savedTracks[this.getRandomInt(savedTracks.length)].track.id);
       const res = await this.api.getRecommendedTracks(q).toPromise();
-      console.log(res);
       const filtered = await this.filterTracks(res.tracks);
       recommendedTracks.push(...filtered);
     } while (recommendedTracks.length < count);
+
     return recommendedTracks;
   }
 
   async filterTracks(tracks) {
     const queryParams = { ids: tracks.map((t) => t.id) };
     const mask = await this.api.getFilterMask(queryParams).toPromise();
-    console.log(mask);
+
     return tracks.filter((x, i) => !mask[i]);
   }
 

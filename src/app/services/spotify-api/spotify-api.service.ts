@@ -78,9 +78,30 @@ export class SpotifyApiService {
     });
   }
 
-  postTracksToPlaylist(queryParams: { uris: string[] }, playlistId: string): Observable<any> {
-    return this.http.post(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, queryParams, {
-      headers: this.h(),
+  createPlaylist(
+    body: {
+      name: string;
+      public?: boolean;
+      collaborative?: boolean;
+      description: string;
+    },
+    user
+  ): Observable<any> {
+    const userId = user.id;
+    const headers = this.h().append('Content-Type', 'application/json');
+    console.log(headers);
+
+    return this.http.post(`${this.apiBase}v1/users/${userId}/playlists`, JSON.stringify(body), {
+      headers,
+    });
+  }
+
+  postTracksToPlaylist(body: { uris: string[] }, playlistId: string): Observable<any> {
+    const headers = this.h().append('Content-Type', 'application/json');
+    console.log(headers);
+
+    return this.http.post(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, body, {
+      headers,
     });
   }
 }
