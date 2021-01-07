@@ -105,5 +105,5 @@ export class SpotifyApiService {
     });
   }
 
-  removeTracksFromPlaylist() {}
+  replaceTracksInPlaylist() {}
 }
