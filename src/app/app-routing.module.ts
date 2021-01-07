@@ -5,10 +5,15 @@ import { CallbackAuthGuard } from './services/guards/callback-auth-guard/callbac
 import { DiscoverComponent } from './components/discover/discover.component';
 import { CallbackComponent } from './components/callback/callback.component';
 import { DiscoverAuthGuard } from './services/guards/discover-auth-guard/discover-auth.guard';
+import { LoginAuthGuard } from './services/guards/login-auth-guard/login-auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [LoginAuthGuard],
+  },
   {
     path: 'callback',
     component: CallbackComponent,

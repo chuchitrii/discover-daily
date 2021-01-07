@@ -9,12 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   imports: [BrowserModule, AppRoutingModule, HttpClientModule],
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    DiscoverComponent,
-    CallbackComponent,
-  ],
+  declarations: [AppComponent, LoginComponent, DiscoverComponent, CallbackComponent],
   providers: [],
   bootstrap: [AppComponent],
 })

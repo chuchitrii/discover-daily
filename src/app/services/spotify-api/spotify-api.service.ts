@@ -98,12 +98,15 @@ export class SpotifyApiService {
 
   postTracksToPlaylist(body: { uris: string[] }, playlistId: string): Observable<any> {
     const headers = this.h().append('Content-Type', 'application/json');
-    console.log(headers);
-
     return this.http.post(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, body, {
       headers,
     });
   }
 
-  replaceTracksInPlaylist() {}
+  replaceTracksInPlaylist(body: { uris: string[] }, playlistId: string): Observable<any> {
+    const headers = this.h().append('Content-Type', 'application/json');
+    return this.http.put(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, body, {
+      headers,
+    });
+  }
 }

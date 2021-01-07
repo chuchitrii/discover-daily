@@ -30,12 +30,16 @@ export class DiscoverService {
       playlist = await this.api.createPlaylist(body, user).toPromise();
       playlistId = playlist.id;
     }
-    if (clear) {
-    }
-    console.log(playlistId);
-    const res = await this.api.postTracksToPlaylist(queryParams, playlistId).toPromise();
 
-    return res;
+    console.log(playlistId);
+
+    if (clear) {
+      const res = await this.api.replaceTracksInPlaylist(queryParams, playlistId).toPromise();
+      return res;
+    } else {
+      const res = await this.api.postTracksToPlaylist(queryParams, playlistId).toPromise();
+      return res;
+    }
   }
 
   async clearPlaylist() {}
