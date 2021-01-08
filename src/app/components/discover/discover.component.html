@@ -1,8 +1,22 @@
-<div>
-  <span>{{user?.display_name}}</span>
+<div class='row justify-content-md-center'>
+  <div class='col-6'>
+    <span>{{user?.display_name}}</span>
+  </div>
 </div>
-<button (click)="getRecommendedTracks()">Recommend</button>
-<button (click)="addTracksToPlaylist()">Add</button>
-<div *ngFor="let track of recommendedTracks">
-  {{track.artists[0].name}} – {{track.name}}
+<div class='row justify-content-md-center'>
+  <div class='card col-6'>
+    <div class='card-body'>
+      <button [disabled]='gettingRecommendations' class='btn btn-primary' (click)="getRecommendedTracks()">Recommend</button>
+      <button *ngIf='searchingPlaylistEnded' class='btn btn-primary' (click)="addTracksToPlaylist()">Add</button>
+
+      <ul class="list-group list-group-flush">
+        <li *ngFor="let track of recommendedTracks" class="list-group-item">
+          <div class='row'>
+            <div class='col'>{{track.artists[0].name}}</div>
+            <div class='col'>{{track.name}}</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
 </div>

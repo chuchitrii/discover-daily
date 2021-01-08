@@ -13,8 +13,9 @@ export class DiscoverComponent implements OnInit {
   playlistId: string;
 
   clear = false;
+  recommendationsFound: boolean;
   gettingRecommendations: boolean;
-  searchingPlaylist: boolean;
+  searchingPlaylistEnded: boolean;
   playlistFound: boolean;
   tracksAdded: boolean;
 
@@ -28,6 +29,7 @@ export class DiscoverComponent implements OnInit {
   }
 
   getRecommendedTracks(): void {
+    this.recommendedTracks = [];
     this.gettingRecommendations = true;
     this.ds.getRecommendation().then((r) => {
       console.log(r);
@@ -38,11 +40,13 @@ export class DiscoverComponent implements OnInit {
   }
 
   addTracksToPlaylist() {
-    this.ds.addTracksToPlaylist(this.recommendedTracks, this.user, this.clear, this.playlistId).then((res) => {});
+    this.ds.addTracksToPlaylist(this.recommendedTracks, this.user, this.clear, this.playlistId).then((res) => {
+      this.recommendedTracks = [];
+    });
   }
 
   findPlaylist() {
-    this.searchingPlaylist = true;
+    this.searchingPlaylistEnded = false;
     this.ds.findDiscoverPlaylist(this.user).then((pl) => {
       if (pl) {
         this.playlistId = pl;
@@ -50,7 +54,7 @@ export class DiscoverComponent implements OnInit {
       } else {
         this.playlistFound = false;
       }
-      this.searchingPlaylist = false;
+      this.searchingPlaylistEnded = true;
     });
   }
 }
