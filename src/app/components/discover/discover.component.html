@@ -1,10 +1,10 @@
 <div class='row justify-content-md-center'>
-  <div class='col-6'>
+  <div class='col-10'>
     <span>{{user?.display_name}}</span>
   </div>
 </div>
 <div class='row justify-content-md-center'>
-  <div class='card col-6'>
+  <div class='card col-10'>
     <div class='card-body'>
       <button [disabled]='gettingRecommendations' class='btn btn-primary' (click)="getRecommendedTracks()">Recommend</button>
       <button *ngIf='searchingPlaylistEnded' class='btn btn-primary' (click)="addTracksToPlaylist()">Add</button>

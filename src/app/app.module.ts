@@ -7,10 +7,11 @@ import { DiscoverComponent } from './components/discover/discover.component';
 import { CallbackComponent } from './components/callback/callback.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
   imports: [CommonModule, BrowserModule, AppRoutingModule, HttpClientModule],
-  declarations: [AppComponent, LoginComponent, DiscoverComponent, CallbackComponent],
+  declarations: [AppComponent, LoginComponent, DiscoverComponent, CallbackComponent, HeaderComponent],
   providers: [],
   bootstrap: [AppComponent],
 })
