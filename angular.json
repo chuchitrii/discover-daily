@@ -118,7 +118,11 @@
         },
         "deploy": {
           "builder": "angular-cli-ghpages:deploy",
-          "options": {}
+          "options": {
+            "baseHref": "https://chuchitrii.github.io/discover-daily/",
+            "name": "Discover Daily",
+            "email": "vza2k@yandex.ru"
+          }
         }
       }
     }
