@@ -13,7 +13,8 @@ export class AuthService {
     client_id: '6f1db9ac4bfa4cbc8c11d365774cd6d3',
     response_type: 'token',
     redirect_uri: 'http://localhost:8888/callback',
-    scope: 'user-read-private user-read-email user-library-modify user-library-read playlist-modify-public playlist-modify-private',
+    scope:
+      'user-read-private user-read-email user-library-modify user-library-read playlist-modify-public playlist-modify-private ugc-image-upload',
     state: null,
   };
 

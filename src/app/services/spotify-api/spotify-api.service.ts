@@ -29,13 +29,7 @@ export class SpotifyApiService {
     return new HttpParams({ fromObject: input });
   }
 
-  authRequest(queryParams: {
-    client_id: string;
-    response_type: string;
-    redirect_uri: string;
-    scope: string;
-    state: string;
-  }): void {
+  authRequest(queryParams: { client_id: string; response_type: string; redirect_uri: string; scope: string; state: string }): void {
     const url = 'https://accounts.spotify.com/authorize?' + this.q(queryParams).toString();
     window.location.href = url;
   }
@@ -46,10 +40,7 @@ export class SpotifyApiService {
     });
   }
 
-  getPlaylists(
-    userId: string,
-    queryParams: { offset: number; limit: number } = this.defaultQ
-  ): Observable<any> {
+  getPlaylists(userId: string, queryParams: { offset: number; limit: number } = this.defaultQ): Observable<any> {
     return this.http.get(`${this.apiBase}v1/users/${userId}/playlists?${this.q(queryParams)}`, {
       headers: this.h(),
     });
@@ -62,14 +53,9 @@ export class SpotifyApiService {
   }
 
   getRecommendedTracks(queryParams: { limit: number; seed_tracks: string[] }): Observable<any> {
-    return this.http.get(
-      `${this.apiBase}v1/recommendations?limit=${
-        queryParams.limit
-      }&seed_tracks=${queryParams.seed_tracks.join(',')}`,
-      {
-        headers: this.h(),
-      }
-    );
+    return this.http.get(`${this.apiBase}v1/recommendations?limit=${queryParams.limit}&seed_tracks=${queryParams.seed_tracks.join(',')}`, {
+      headers: this.h(),
+    });
   }
 
   getFilterMask(queryParams: { ids: string[] }): Observable<any> {
@@ -106,6 +92,13 @@ export class SpotifyApiService {
   replaceTracksInPlaylist(body: { uris: string[] }, playlistId: string): Observable<any> {
     const headers = this.h().append('Content-Type', 'application/json');
     return this.http.put(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, body, {
+      headers,
+    });
+  }
+
+  uploadPlaylistCover(body: string, playlistId: string) {
+    const headers = this.h().append('Content-Type', 'image/jpeg');
+    return this.http.put(`${this.apiBase}v1/playlists/${playlistId}/images`, body, {
       headers,
     });
   }

@@ -3,7 +3,7 @@
   <div class='card text-white bg-dark mb-3 col-sm-8'>
     <div class='card-body'>
 
-        <div class='row justify-content-start align-content-start'>
+        <div class='row'>
 
           <div class='col-4 col-sm-2'>
            <button [disabled]='gettingRecommendations' class='btn btn-outline-light' (click)="getRecommendedTracks()">Recommend</button>
@@ -22,7 +22,12 @@
             </div>
           </div>
         </div>
-    </div>
+
+      <div class='row mt-2 text-muted'>
+        <div class='col'>Tracks will be added to playlist «Discover Daily». If there is none it will be created.</div>
+      </div>
+
+      </div>
   </div>
 
   <div class='col-sm'></div>
