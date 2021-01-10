@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SpotifyApiService } from '../spotify-api/spotify-api.service';
+import { image } from '../../models/image';
 
 @Injectable({
   providedIn: 'root',
@@ -25,13 +26,14 @@ export class DiscoverService {
     if (!playlistId) {
       const body = {
         name: 'Discover Daily',
-        description: 'Created with «Discover Daily»',
+        description: 'Created with «Discover Daily» https://chuchitrii.github.io/discover-daily/',
       };
       playlist = await this.api.createPlaylist(body, user).toPromise();
       playlistId = playlist.id;
     }
 
     console.log(playlistId);
+    this.uploadPlaylistCover(playlistId).then((res) => console.log(res));
 
     if (clear) {
       const res = await this.api.replaceTracksInPlaylist(queryParams, playlistId).toPromise();
@@ -41,8 +43,6 @@ export class DiscoverService {
       return res;
     }
   }
-
-  async clearPlaylist() {}
 
   async getUserProfile() {
     const user = await this.api.getUserProfile().toPromise();
@@ -122,5 +122,10 @@ export class DiscoverService {
 
   getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
+  }
+
+  async uploadPlaylistCover(playlistId: string) {
+    const body = image;
+    return await this.api.uploadPlaylistCover(body, playlistId).toPromise();
   }
 }
