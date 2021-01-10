@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../services/auth/auth.service';
+import { takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -6,7 +9,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  constructor() {}
+  user: any;
+  destroySub: Subject<boolean>;
+  isLoggedIn: boolean;
 
-  ngOnInit(): void {}
+  constructor(private as: AuthService) {
+    this.destroySub = new Subject();
+  }
+
+  ngOnInit(): void {
+    this.as.isLoggedIn$.pipe(takeUntil(this.destroySub)).subscribe((res) => {
+      this.isLoggedIn = res;
+    });
+  }
+
+  logout() {
+    this.as.logout();
+  }
 }

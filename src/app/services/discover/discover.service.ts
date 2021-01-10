@@ -49,10 +49,7 @@ export class DiscoverService {
     return user;
   }
 
-  async getUserPlaylists(
-    userId: string,
-    queryParams: { offset: number; limit: number } = this.defaultQ
-  ): Promise<any> {
+  async getUserPlaylists(userId: string, queryParams: { offset: number; limit: number } = this.defaultQ): Promise<any> {
     const playlists = await this.api.getPlaylists(userId).toPromise();
     return playlists;
   }
@@ -86,7 +83,7 @@ export class DiscoverService {
 
   async getAllSavedTracks() {
     const savedTracks: any[] = [];
-    const q = this.defaultQ;
+    const q = { offset: 0, limit: 50 };
     let total = 0;
 
     do {

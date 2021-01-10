@@ -1,16 +1,44 @@
-<div class='row justify-content-md-center'>
-  <div class='col-10'>
-    <span>{{user?.display_name}}</span>
-  </div>
-</div>
-<div class='row justify-content-md-center'>
-  <div class='card col-10'>
+<div class='row'>
+  <div class='col-sm'></div>
+  <div class='card text-white bg-dark mb-3 col-sm-8'>
     <div class='card-body'>
-      <button [disabled]='gettingRecommendations' class='btn btn-primary' (click)="getRecommendedTracks()">Recommend</button>
-      <button *ngIf='searchingPlaylistEnded' class='btn btn-primary' (click)="addTracksToPlaylist()">Add</button>
 
+        <div class='row justify-content-start align-content-start'>
+
+          <div class='col-4 col-sm-2'>
+           <button [disabled]='gettingRecommendations' class='btn btn-outline-light' (click)="getRecommendedTracks()">Recommend</button>
+          </div>
+
+          <div class='col-3 col-sm-7'>
+            <button [disabled]='!recommendationsFound' class='btn btn-outline-light' (click)="addTracksToPlaylist()">Add</button>
+          </div>
+
+          <div class='col-5 col-sm-3 checkbox-center'>
+            <div class='form-check'>
+            <input class="form-check-input" type="checkbox" [checked]='clear' (change)='clearChange()' value="" id="clearCheck" [disabled]='!playlistFound'>
+            <label class="form-check-label" for="clearCheck">
+              Clear playlist
+            </label>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <div class='col-sm'></div>
+</div>
+<div  *ngIf='recommendationsFound' class='row'>
+  <div class='col-sm'></div>
+  <div class='card text-white bg-dark mb-3 col-sm-8'>
+    <div class='card-body'>
       <ul class="list-group list-group-flush">
-        <li *ngFor="let track of recommendedTracks" class="list-group-item">
+        <li class="list-group-item bg-dark text-muted">
+          <div class='row'>
+            <div class='col'>Artist</div>
+            <div class='col'>Track</div>
+          </div>
+        </li>
+        <li *ngFor="let track of recommendedTracks" class="list-group-item bg-dark text-light">
           <div class='row'>
             <div class='col'>{{track.artists[0].name}}</div>
             <div class='col'>{{track.name}}</div>
@@ -19,4 +47,5 @@
       </ul>
     </div>
   </div>
+  <div class='col-sm'></div>
 </div>

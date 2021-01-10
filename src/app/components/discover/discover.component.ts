@@ -13,11 +13,11 @@ export class DiscoverComponent implements OnInit {
   playlistId: string;
 
   clear = false;
-  recommendationsFound: boolean;
-  gettingRecommendations: boolean;
-  searchingPlaylistEnded: boolean;
-  playlistFound: boolean;
-  tracksAdded: boolean;
+  recommendationsFound = false;
+  gettingRecommendations = false;
+  searchingPlaylistEnded = false;
+  playlistFound = false;
+  tracksAdded = false;
 
   constructor(private ds: DiscoverService, private api: SpotifyApiService) {}
 
@@ -29,19 +29,22 @@ export class DiscoverComponent implements OnInit {
   }
 
   getRecommendedTracks(): void {
+    this.findPlaylist();
     this.recommendedTracks = [];
     this.gettingRecommendations = true;
+    this.recommendationsFound = false;
     this.ds.getRecommendation().then((r) => {
       console.log(r);
       this.recommendedTracks.push(...r);
       this.gettingRecommendations = false;
+      this.recommendationsFound = true;
     });
-    this.findPlaylist();
   }
 
   addTracksToPlaylist() {
     this.ds.addTracksToPlaylist(this.recommendedTracks, this.user, this.clear, this.playlistId).then((res) => {
       this.recommendedTracks = [];
+      this.recommendationsFound = false;
     });
   }
 
@@ -56,5 +59,9 @@ export class DiscoverComponent implements OnInit {
       }
       this.searchingPlaylistEnded = true;
     });
+  }
+
+  clearChange() {
+    this.clear = !this.clear;
   }
 }

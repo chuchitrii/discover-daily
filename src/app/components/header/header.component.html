@@ -1,12 +1,14 @@
 <div class='row'>
-  <div class='col-1'></div>
-  <div class='col-10 header-container'>
-    <div class='app-name'>
+  <div class='col-sm'></div>
+  <div class='col-sm-8 header-container'>
+    <div class='row'>
+    <div class='app-name col-8 col-sm-8'>
       discover daily
     </div>
-    <div class='user-info'>
-
+    <div class='user-info col-4 col-sm-4'>
+      <button *ngIf='isLoggedIn' class='btn btn-outline-light float-end mt-1' (click)="logout()">Logout</button>
+    </div>
     </div>
   </div>
-  <div class='col-1'></div>
+  <div class='col-sm'></div>
 </div>
