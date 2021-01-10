@@ -37,6 +37,7 @@
     "@types/node": "^12.11.1",
     "@typescript-eslint/eslint-plugin": "4.3.0",
     "@typescript-eslint/parser": "4.3.0",
+    "angular-cli-ghpages": "^1.0.0-rc.1",
     "codelyzer": "^6.0.0",
     "eslint": "^7.6.0",
     "eslint-config-prettier": "^6.15.0",
