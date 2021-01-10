@@ -25,7 +25,7 @@ export class DiscoverService {
     if (!playlistId) {
       const body = {
         name: 'Discover Daily',
-        description: 'Created with «Discover Daily»',
+        description: 'Created with «Discover Daily» https://chuchitrii.github.io/discover-daily/',
       };
       playlist = await this.api.createPlaylist(body, user).toPromise();
       playlistId = playlist.id;
@@ -41,8 +41,6 @@ export class DiscoverService {
       return res;
     }
   }
-
-  async clearPlaylist() {}
 
   async getUserProfile() {
     const user = await this.api.getUserProfile().toPromise();
