@@ -12,7 +12,7 @@ export class AuthService {
   authQueryParams = {
     client_id: '6f1db9ac4bfa4cbc8c11d365774cd6d3',
     response_type: 'token',
-    redirect_uri: 'http://localhost:8888/callback',
+    redirect_uri: 'https://chuchitrii.github.io/discover-daily/callback',
     scope: 'user-read-private user-read-email user-library-modify user-library-read playlist-modify-public playlist-modify-private',
     state: null,
   };
