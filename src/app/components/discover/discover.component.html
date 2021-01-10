@@ -27,9 +27,13 @@
 
   <div class='col-sm'></div>
 </div>
-<div  *ngIf='recommendationsFound' class='row'>
+<div *ngIf='!recommendationsFound && gettingRecommendations'>
+
+</div>
+<div class='row'>
   <div class='col-sm'></div>
-  <div class='card text-white bg-dark mb-3 col-sm-8'>
+
+  <div  *ngIf='recommendationsFound' class='card text-white bg-dark mb-3 col-sm-8'>
     <div class='card-body'>
       <ul class="list-group list-group-flush">
         <li class="list-group-item bg-dark text-muted">
@@ -47,5 +51,18 @@
       </ul>
     </div>
   </div>
+
+  <div *ngIf='!recommendationsFound && gettingRecommendations' class='card text-white bg-dark mb-3 col-sm-8'>
+    <div class='card-body'>
+    Loading...
+    </div>
+  </div>
+
+  <div *ngIf='tracksAdded' class='card text-white bg-dark mb-3 col-sm-8'>
+    <div class='card-body'>
+      Tracks have been added to playlist
+    </div>
+  </div>
+
   <div class='col-sm'></div>
 </div>
