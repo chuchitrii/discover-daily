@@ -25,12 +25,17 @@ export class SpotifyApiService {
     });
   }
 
-  q(input: any): HttpParams {
-    return new HttpParams({ fromObject: input });
+  q(object: any): HttpParams {
+    Object.keys(object).forEach((key) => {
+      if (Array.isArray(object[key])) {
+        object[key] = object[key].join();
+      }
+    });
+    return new HttpParams({ fromObject: object });
   }
 
   authRequest(queryParams: { client_id: string; response_type: string; redirect_uri: string; scope: string; state: string }): void {
-    const url = 'https://accounts.spotify.com/authorize?' + this.q(queryParams).toString();
+    const url = `https://accounts.spotify.com/authorize?${this.q(queryParams)}`;
     window.location.href = url;
   }
 
@@ -53,13 +58,13 @@ export class SpotifyApiService {
   }
 
   getRecommendedTracks(queryParams: { limit: number; seed_tracks: string[] }): Observable<any> {
-    return this.http.get(`${this.apiBase}v1/recommendations?limit=${queryParams.limit}&seed_tracks=${queryParams.seed_tracks.join(',')}`, {
+    return this.http.get(`${this.apiBase}v1/recommendations?${this.q(queryParams)}`, {
       headers: this.h(),
     });
   }
 
   getFilterMask(queryParams: { ids: string[] }): Observable<any> {
-    return this.http.get(`${this.apiBase}v1/me/tracks/contains?ids=${queryParams.ids.join(',')}`, {
+    return this.http.get(`${this.apiBase}v1/me/tracks/contains?${this.q(queryParams)}`, {
       headers: this.h(),
     });
   }
@@ -71,7 +76,7 @@ export class SpotifyApiService {
       collaborative?: boolean;
       description: string;
     },
-    user
+    user: any
   ): Observable<any> {
     const userId = user.id;
     const headers = this.h().append('Content-Type', 'application/json');
@@ -100,6 +105,12 @@ export class SpotifyApiService {
     const headers = this.h().append('Content-Type', 'image/jpeg');
     return this.http.put(`${this.apiBase}v1/playlists/${playlistId}/images`, body, {
       headers,
+    });
+  }
+
+  getTopArtists(queryParams: { time_range?: 'short_term' | 'medium_term' | 'long_term'; limit?: number; offset?: number }) {
+    return this.http.get(`${this.apiBase}v1/me/top/artists?${this.q(queryParams)}`, {
+      headers: this.h(),
     });
   }
 }
