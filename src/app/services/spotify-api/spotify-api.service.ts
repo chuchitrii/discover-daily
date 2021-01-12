@@ -35,8 +35,7 @@ export class SpotifyApiService {
   }
 
   authRequest(queryParams: { client_id: string; response_type: string; redirect_uri: string; scope: string; state: string }): void {
-    const url = `https://accounts.spotify.com/authorize?${this.q(queryParams)}`;
-    window.location.href = url;
+    window.location.href = `https://accounts.spotify.com/authorize?${this.q(queryParams)}`;
   }
 
   getUserProfile(): Observable<any> {
@@ -79,32 +78,27 @@ export class SpotifyApiService {
     user: any
   ): Observable<any> {
     const userId = user.id;
-    const headers = this.h().append('Content-Type', 'application/json');
-    console.log(headers);
 
     return this.http.post(`${this.apiBase}v1/users/${userId}/playlists`, JSON.stringify(body), {
-      headers,
+      headers: this.h().append('Content-Type', 'application/json'),
     });
   }
 
   postTracksToPlaylist(body: { uris: string[] }, playlistId: string): Observable<any> {
-    const headers = this.h().append('Content-Type', 'application/json');
     return this.http.post(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, body, {
-      headers,
+      headers: this.h().append('Content-Type', 'application/json'),
     });
   }
 
   replaceTracksInPlaylist(body: { uris: string[] }, playlistId: string): Observable<any> {
-    const headers = this.h().append('Content-Type', 'application/json');
     return this.http.put(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, body, {
-      headers,
+      headers: this.h().append('Content-Type', 'application/json'),
     });
   }
 
   uploadPlaylistCover(body: string, playlistId: string) {
-    const headers = this.h().append('Content-Type', 'image/jpeg');
     return this.http.put(`${this.apiBase}v1/playlists/${playlistId}/images`, body, {
-      headers,
+      headers: this.h().append('Content-Type', 'image/jpeg'),
     });
   }
 
