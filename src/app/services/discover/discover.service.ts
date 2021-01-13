@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SpotifyApiService } from '../spotify-api/spotify-api.service';
 import { image } from '../../models/image';
+import { TrackObjectSimplified } from '../../models/spotify-api';
 
 @Injectable({
   providedIn: 'root',
@@ -113,19 +114,18 @@ export class DiscoverService {
     return recommendedTracks;
   }
 
-  async filterTracks(tracks) {
+  async filterTracks(tracks: TrackObjectSimplified[]) {
     const queryParams = { ids: tracks.map((t) => t.id) };
     const mask = await this.api.getFilterMask(queryParams).toPromise();
 
     return tracks.filter((x, i) => !mask[i]);
   }
 
-  getRandomInt(max) {
+  getRandomInt(max: number): number {
     return Math.floor(Math.random() * Math.floor(max));
   }
 
   async uploadPlaylistCover(playlistId: string) {
-    const body = image;
-    return await this.api.uploadPlaylistCover(body, playlistId).toPromise();
+    return await this.api.uploadPlaylistCover(image, playlistId).toPromise();
   }
 }

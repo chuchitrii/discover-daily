@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { SpotifyAuthRequestQueryParams } from '../../models/spotify-query-params-model';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { RecommendationsObject, RecommendationsOptionsObject } from '../../models/spotify-api';
 
 @Injectable({
   providedIn: 'root',
@@ -56,8 +56,8 @@ export class SpotifyApiService {
     });
   }
 
-  getRecommendedTracks(queryParams: { limit: number; seed_tracks: string[] }): Observable<any> {
-    return this.http.get(`${this.apiBase}v1/recommendations?${this.q(queryParams)}`, {
+  getRecommendedTracks(queryParams: RecommendationsOptionsObject): Observable<RecommendationsObject> {
+    return this.http.get<RecommendationsObject>(`${this.apiBase}v1/recommendations?${this.q(queryParams)}`, {
       headers: this.h(),
     });
   }
