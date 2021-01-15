@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
 import { takeUntil } from 'rxjs/operators';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
+import { UserObjectPublic } from '../../models/spotify-api';
 
 @Component({
   selector: 'app-header',
@@ -9,7 +10,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  user: any;
+  user: UserObjectPublic;
   destroySub: Subject<boolean>;
   isLoggedIn: boolean;
 

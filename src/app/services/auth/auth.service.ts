@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { SpotifyApiService } from '../spotify-api/spotify-api.service';
 import { Router } from '@angular/router';
+import { IAuthQueryParams } from '../../models/spotify-api';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,7 @@ import { Router } from '@angular/router';
 export class AuthService {
   isLoggedIn$: BehaviorSubject<boolean>;
   minTimeBeforeRefresh = 150000;
-  authQueryParams = {
+  authQueryParams: IAuthQueryParams = {
     client_id: '6f1db9ac4bfa4cbc8c11d365774cd6d3',
     response_type: 'token',
     redirect_uri: 'http://localhost:8888/callback',
@@ -19,7 +20,7 @@ export class AuthService {
   };
 
   constructor(private api: SpotifyApiService, private router: Router) {
-    this.isLoggedIn$ = new BehaviorSubject<boolean>(false);
+    this.isLoggedIn$ = new BehaviorSubject<boolean>(this.isLoggedIn());
   }
 
   generateRandomString(length): string {
@@ -43,22 +44,18 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     if (localStorage.getItem('access_token')) {
-      console.log('s', 0);
       if (
         this.minTimeBeforeRefresh <
         Number(localStorage.getItem('accessed_at')) + Number(localStorage.getItem('expires_in') + '000') - Date.now()
       ) {
-        console.log('s', 1);
         this.isLoggedIn$.next(true);
         return true;
       } else {
-        console.log('s', 2);
         this.removeLocalStorageItems();
         this.isLoggedIn$.next(false);
         return false;
       }
     } else {
-      console.log('s', 3);
       this.removeLocalStorageItems();
       this.isLoggedIn$.next(false);
       return false;
