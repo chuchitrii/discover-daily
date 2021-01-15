@@ -1218,5 +1218,36 @@ export interface ResumePointObject {
   resume_position_ms: number;
 }
 
+export interface IAuthQueryParams {
+  client_id: string;
+  response_type: string;
+  redirect_uri: string;
+  scope: string;
+  state: string;
+  show_dialog?: boolean;
+}
+
+export interface IQueryParams {
+  limit: number;
+  offset: number;
+}
+
+export interface ICreatePlaylist {
+  name: string;
+  public?: boolean;
+  collaborative?: boolean;
+  description?: string;
+}
+
+export interface IAddTracksToPlaylist {
+  position?: number;
+  uris: string[];
+}
+export interface IGetUserTopArtist {
+  time_range?: 'short_term' | 'medium_term' | 'long_term';
+  limit?: number;
+  offset?: number;
+}
+
 type ContextObjectType = 'artist' | 'playlist' | 'album';
 type PlaybackRepeatState = 'off' | 'track' | 'context';

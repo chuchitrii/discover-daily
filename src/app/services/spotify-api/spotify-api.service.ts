@@ -1,23 +1,31 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { RecommendationsObject, RecommendationsOptionsObject } from '../../models/spotify-api';
+import {
+  ArtistObjectFull,
+  IAddTracksToPlaylist,
+  IAuthQueryParams,
+  ICreatePlaylist,
+  IGetUserTopArtist,
+  IQueryParams,
+  PagingObject,
+  PlaylistObjectFull,
+  PlaylistObjectSimplified,
+  PlaylistSnapshotResponse,
+  RecommendationsObject,
+  RecommendationsOptionsObject,
+  SavedTrackObject,
+  UserObjectPublic,
+} from '../../models/spotify-api';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SpotifyApiService {
-  access_token: string = null;
   apiBase = 'https://api.spotify.com/';
-  headers: HttpHeaders;
-  defaultQ = { offset: 0, limit: 50 };
+  defaultQ: IQueryParams = { offset: 0, limit: 50 };
 
-  constructor(private http: HttpClient) {
-    this.access_token = localStorage.getItem('access_token');
-    this.headers = new HttpHeaders({
-      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-    });
-  }
+  constructor(private http: HttpClient) {}
 
   h(): HttpHeaders {
     return new HttpHeaders({
@@ -34,24 +42,24 @@ export class SpotifyApiService {
     return new HttpParams({ fromObject: object });
   }
 
-  authRequest(queryParams: { client_id: string; response_type: string; redirect_uri: string; scope: string; state: string }): void {
+  authRequest(queryParams: IAuthQueryParams): void {
     window.location.href = `https://accounts.spotify.com/authorize?${this.q(queryParams)}`;
   }
 
-  getUserProfile(): Observable<any> {
-    return this.http.get(this.apiBase + 'v1/me', {
+  getUserProfile(): Observable<UserObjectPublic> {
+    return this.http.get<UserObjectPublic>(this.apiBase + 'v1/me', {
       headers: this.h(),
     });
   }
 
-  getPlaylists(userId: string, queryParams: { offset: number; limit: number } = this.defaultQ): Observable<any> {
-    return this.http.get(`${this.apiBase}v1/users/${userId}/playlists?${this.q(queryParams)}`, {
+  getPlaylists(userId: string, queryParams: IQueryParams = this.defaultQ): Observable<PagingObject<PlaylistObjectSimplified>> {
+    return this.http.get<PagingObject<PlaylistObjectSimplified>>(`${this.apiBase}v1/users/${userId}/playlists?${this.q(queryParams)}`, {
       headers: this.h(),
     });
   }
 
-  getSavedTracks(queryParams: { offset: number; limit: number } = this.defaultQ): Observable<any> {
-    return this.http.get(`${this.apiBase}v1/me/tracks?${this.q(queryParams)}`, {
+  getSavedTracks(queryParams: IQueryParams = this.defaultQ): Observable<PagingObject<SavedTrackObject>> {
+    return this.http.get<PagingObject<SavedTrackObject>>(`${this.apiBase}v1/me/tracks?${this.q(queryParams)}`, {
       headers: this.h(),
     });
   }
@@ -62,30 +70,20 @@ export class SpotifyApiService {
     });
   }
 
-  getFilterMask(queryParams: { ids: string[] }): Observable<any> {
-    return this.http.get(`${this.apiBase}v1/me/tracks/contains?${this.q(queryParams)}`, {
+  getFilterMask(queryParams: { ids: string[] }): Observable<Array<boolean>> {
+    return this.http.get<Array<boolean>>(`${this.apiBase}v1/me/tracks/contains?${this.q(queryParams)}`, {
       headers: this.h(),
     });
   }
 
-  createPlaylist(
-    body: {
-      name: string;
-      public?: boolean;
-      collaborative?: boolean;
-      description: string;
-    },
-    user: any
-  ): Observable<any> {
-    const userId = user.id;
-
-    return this.http.post(`${this.apiBase}v1/users/${userId}/playlists`, JSON.stringify(body), {
+  createPlaylist(body: ICreatePlaylist, user: UserObjectPublic): Observable<PlaylistObjectFull> {
+    return this.http.post<PlaylistObjectFull>(`${this.apiBase}v1/users/${user.id}/playlists`, JSON.stringify(body), {
       headers: this.h().append('Content-Type', 'application/json'),
     });
   }
 
-  postTracksToPlaylist(body: { uris: string[] }, playlistId: string): Observable<any> {
-    return this.http.post(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, body, {
+  postTracksToPlaylist(body: IAddTracksToPlaylist, playlistId: string): Observable<PlaylistSnapshotResponse> {
+    return this.http.post<PlaylistSnapshotResponse>(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, body, {
       headers: this.h().append('Content-Type', 'application/json'),
     });
   }
@@ -96,14 +94,14 @@ export class SpotifyApiService {
     });
   }
 
-  uploadPlaylistCover(body: string, playlistId: string) {
+  uploadPlaylistCover(body: string, playlistId: string): Observable<any> {
     return this.http.put(`${this.apiBase}v1/playlists/${playlistId}/images`, body, {
       headers: this.h().append('Content-Type', 'image/jpeg'),
     });
   }
 
-  getTopArtists(queryParams: { time_range?: 'short_term' | 'medium_term' | 'long_term'; limit?: number; offset?: number }) {
-    return this.http.get(`${this.apiBase}v1/me/top/artists?${this.q(queryParams)}`, {
+  getTopArtists(queryParams: IGetUserTopArtist): Observable<PagingObject<ArtistObjectFull>> {
+    return this.http.get<PagingObject<ArtistObjectFull>>(`${this.apiBase}v1/me/top/artists?${this.q(queryParams)}`, {
       headers: this.h(),
     });
   }

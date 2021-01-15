@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SpotifyApiService } from '../../services/spotify-api/spotify-api.service';
 import { DiscoverService } from '../../services/discover/discover.service';
+import { TrackObjectSimplified, UserObjectPublic } from '../../models/spotify-api';
 
 @Component({
   selector: 'app-discover',
@@ -8,8 +9,8 @@ import { DiscoverService } from '../../services/discover/discover.service';
   styleUrls: ['./discover.component.scss'],
 })
 export class DiscoverComponent implements OnInit {
-  recommendedTracks: unknown[] = [];
-  user: any;
+  recommendedTracks: TrackObjectSimplified[] = [];
+  user: UserObjectPublic;
   playlistId: string;
 
   clear = false;
@@ -23,7 +24,6 @@ export class DiscoverComponent implements OnInit {
 
   ngOnInit(): void {
     this.ds.getUserProfile().then((user) => {
-      console.log(user);
       this.user = user;
     });
   }
@@ -35,14 +35,13 @@ export class DiscoverComponent implements OnInit {
     this.findPlaylist();
     this.recommendedTracks = [];
     this.ds.getRecommendation().then((r) => {
-      console.log(r);
       this.recommendedTracks.push(...r);
       this.gettingRecommendations = false;
       this.recommendationsFound = true;
     });
   }
 
-  addTracksToPlaylist() {
+  addTracksToPlaylist(): void {
     this.ds.addTracksToPlaylist(this.recommendedTracks, this.user, this.clear, this.playlistId).then((res) => {
       this.recommendedTracks = [];
       this.recommendationsFound = false;
@@ -50,7 +49,7 @@ export class DiscoverComponent implements OnInit {
     });
   }
 
-  findPlaylist() {
+  findPlaylist(): void {
     this.searchingPlaylistEnded = false;
     this.ds.findDiscoverPlaylist(this.user).then((pl) => {
       if (pl) {
@@ -63,7 +62,7 @@ export class DiscoverComponent implements OnInit {
     });
   }
 
-  clearChange() {
+  clearChange(): void {
     this.clear = !this.clear;
   }
 }

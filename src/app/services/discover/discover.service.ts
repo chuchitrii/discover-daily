@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
 import { SpotifyApiService } from '../spotify-api/spotify-api.service';
 import { image } from '../../models/image';
-import { TrackObjectSimplified } from '../../models/spotify-api';
+import {
+  PagingObject,
+  PlaylistObjectSimplified,
+  SavedTrackObject,
+  TrackObjectSimplified,
+  UserObjectPublic,
+} from '../../models/spotify-api';
 
 @Injectable({
   providedIn: 'root',
@@ -13,8 +19,7 @@ export class DiscoverService {
 
   async getRecommendation() {
     const savedTracks = await this.getAllSavedTracks();
-    const recommendedTracks = await this.getAllRecommendedTracks(savedTracks);
-    return recommendedTracks;
+    return await this.getAllRecommendedTracks(savedTracks);
   }
 
   async addTracksToPlaylist(recommendedTracks, user, clear: boolean, playlistId?: string) {
@@ -37,31 +42,30 @@ export class DiscoverService {
     this.uploadPlaylistCover(playlistId).then((res) => console.log(res));
 
     if (clear) {
-      const res = await this.api.replaceTracksInPlaylist(queryParams, playlistId).toPromise();
-      return res;
+      return await this.api.replaceTracksInPlaylist(queryParams, playlistId).toPromise();
     } else {
-      const res = await this.api.postTracksToPlaylist(queryParams, playlistId).toPromise();
-      return res;
+      return await this.api.postTracksToPlaylist(queryParams, playlistId).toPromise();
     }
   }
 
-  async getUserProfile() {
-    const user = await this.api.getUserProfile().toPromise();
-    return user;
+  async getUserProfile(): Promise<UserObjectPublic> {
+    return await this.api.getUserProfile().toPromise();
   }
 
-  async getUserPlaylists(userId: string, queryParams: { offset: number; limit: number } = this.defaultQ): Promise<any> {
-    const playlists = await this.api.getPlaylists(userId).toPromise();
-    return playlists;
+  async getUserPlaylists(
+    userId: string,
+    queryParams: { offset: number; limit: number } = this.defaultQ
+  ): Promise<PagingObject<PlaylistObjectSimplified>> {
+    return await this.api.getPlaylists(userId, queryParams).toPromise();
   }
 
-  async getAllPlaylists(userId) {
-    const playlists = [];
+  async getAllPlaylists(userId): Promise<PlaylistObjectSimplified[]> {
+    const playlists: PlaylistObjectSimplified[] = [];
     const q = {
       offset: 0,
       limit: 50,
     };
-    let total;
+    let total: number;
 
     do {
       const res = await this.getUserPlaylists(userId, q);
@@ -73,17 +77,15 @@ export class DiscoverService {
     return playlists;
   }
 
-  async findDiscoverPlaylist(user): Promise<string> {
+  async findDiscoverPlaylist(user: UserObjectPublic): Promise<string> {
     const userId = user.id;
-    console.log(userId);
     const playlists = await this.getAllPlaylists(userId);
-    console.log(playlists);
 
     return playlists[playlists.findIndex((p) => p.name === 'Discover Daily')].id;
   }
 
-  async getAllSavedTracks() {
-    const savedTracks: any[] = [];
+  async getAllSavedTracks(): Promise<SavedTrackObject[]> {
+    const savedTracks: SavedTrackObject[] = [];
     const q = { offset: 0, limit: 50 };
     let total = 0;
 
@@ -97,10 +99,10 @@ export class DiscoverService {
     return savedTracks;
   }
 
-  async getAllRecommendedTracks(savedTracks, count = 30) {
+  async getAllRecommendedTracks(savedTracks, count = 30): Promise<TrackObjectSimplified[]> {
     const q = { limit: 5, seed_tracks: [] };
     const length = 5;
-    const recommendedTracks: any[] = [];
+    const recommendedTracks: TrackObjectSimplified[] = [];
 
     do {
       q.seed_tracks = Array(length)
