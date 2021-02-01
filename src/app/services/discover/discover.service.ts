@@ -7,6 +7,7 @@ import {
   SavedTrackObject,
   TrackObjectSimplified,
   UserObjectPublic,
+  ArtistObjectFull,
 } from '../../models/spotify-api';
 
 @Injectable({
@@ -19,6 +20,20 @@ export class DiscoverService {
 
   async getRecommendation() {
     const savedTracks = await this.getAllSavedTracks();
+    const allArtists = await this.getAllArtists(savedTracks);
+    const allGenres: IGenreModel<IArtistGenreModel>[] = [];
+    allArtists.forEach((artist) => {
+      artist.genres.forEach((genre) => {
+        const i = allGenres.findIndex((genreModel) => genreModel.name === genre);
+        if (i > -1) {
+          allGenres[i].artists.push(new ArtistGenre(artist));
+        } else {
+          allGenres.push({ name: genre, artists: [new ArtistGenre(artist)] });
+        }
+      });
+    });
+    allGenres.sort((a, b) => b.artists.length - a.artists.length);
+    console.log(allGenres);
     return await this.getAllRecommendedTracks(savedTracks);
   }
 
@@ -99,7 +114,7 @@ export class DiscoverService {
     return savedTracks;
   }
 
-  async getAllRecommendedTracks(savedTracks, count = 30): Promise<TrackObjectSimplified[]> {
+  async getAllRecommendedTracks(savedTracks: SavedTrackObject[], count = 30): Promise<TrackObjectSimplified[]> {
     const q = { limit: 5, seed_tracks: [] };
     const length = 5;
     const recommendedTracks: TrackObjectSimplified[] = [];
@@ -129,5 +144,54 @@ export class DiscoverService {
 
   async uploadPlaylistCover(playlistId: string) {
     return await this.api.uploadPlaylistCover(image, playlistId).toPromise();
+  }
+
+  createArtistsArray(savedTracks: SavedTrackObject[]): string[] {
+    const artistsIds = new Set<string>();
+    savedTracks.forEach((item) => {
+      item.track.artists.forEach((artist) => {
+        artistsIds.add(artist.id);
+      });
+    });
+    return Array.from(artistsIds);
+  }
+
+  async getArtistObjectFull(ids: string[]): Promise<ArtistObjectFull[]> {
+    const artistsFullObject: ArtistObjectFull[] = [];
+    let limit = 50;
+    let offset = 0;
+    do {
+      const res = await this.api.getArtistsInformation({ ids: ids.slice(offset, limit) }).toPromise();
+      artistsFullObject.push(...res.artists);
+      limit += 50;
+      offset += 50;
+    } while (artistsFullObject.length < ids.length);
+
+    console.log(artistsFullObject.map((artist) => artist.name));
+
+    return artistsFullObject;
+  }
+
+  async getAllArtists(savedTracks): Promise<ArtistObjectFull[]> {
+    return await this.getArtistObjectFull(this.createArtistsArray(savedTracks));
+  }
+}
+
+interface IGenreModel<T> {
+  name: string;
+  artists: T[];
+}
+
+interface IArtistGenreModel {
+  name: string;
+  id: string;
+}
+
+class ArtistGenre implements IArtistGenreModel {
+  name: string;
+  id: string;
+  constructor(artist: ArtistObjectFull) {
+    this.name = artist.name;
+    this.id = artist.id;
   }
 }

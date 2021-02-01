@@ -16,6 +16,7 @@ import {
   RecommendationsOptionsObject,
   SavedTrackObject,
   UserObjectPublic,
+  MultipleArtistsResponse,
 } from '../../models/spotify-api';
 
 @Injectable({
@@ -102,6 +103,13 @@ export class SpotifyApiService {
 
   getTopArtists(queryParams: IGetUserTopArtist): Observable<PagingObject<ArtistObjectFull>> {
     return this.http.get<PagingObject<ArtistObjectFull>>(`${this.apiBase}v1/me/top/artists?${this.q(queryParams)}`, {
+      headers: this.h(),
+    });
+  }
+
+  getArtistsInformation(queryParams: { ids: string[] }): Observable<MultipleArtistsResponse> {
+    console.log(queryParams);
+    return this.http.get<MultipleArtistsResponse>(`${this.apiBase}v1/artists?${this.q(queryParams)}`, {
       headers: this.h(),
     });
   }

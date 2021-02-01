@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /**
  * Object for search parameters for searching for tracks, playlists, artists or albums.
  * See: [Search for an item](https://developer.spotify.com/web-api/search-item/)
@@ -130,6 +131,7 @@ export interface PlayParameterObject {
 /**
  * Void Response
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface VoidResponse {}
 
 /**
