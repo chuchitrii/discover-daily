@@ -108,7 +108,6 @@ export class SpotifyApiService {
   }
 
   getArtistsInformation(queryParams: { ids: string[] }): Observable<MultipleArtistsResponse> {
-    console.log(queryParams);
     return this.http.get<MultipleArtistsResponse>(`${this.apiBase}v1/artists?${this.q(queryParams)}`, {
       headers: this.h(),
     });

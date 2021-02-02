@@ -1,5 +1,14 @@
 <div class='row justify-content-center'>
-  <div class='block text-white bg-dark mb-3 col-12 col-sm-8'>
+  <div class='card text-white bg-dark m-1 col-12 col-sm-5'>
+    <div class='card-body'>
+      <div class='row'>
+        <div class='col'>List of genres, that you liked.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class='card text-white bg-dark m-1 col-12 col-sm-5'>
+    <div class='card-body'>
       <div class='row'>
         <div class='col-4 col-sm-2'>
           <button [disabled]='gettingRecommendations' class='btn btn-outline-light' (click)='getRecommendedTracks()'>
@@ -13,14 +22,16 @@
         <div class='col-5 col-sm-3 checkbox-center'>
           <div class='form-check'>
             <input class='form-check-input' type='checkbox' [checked]='clear' (change)='clearChange()' value=''
-                   id='clearCheck' [disabled]='!playlistFound'>
+              id='clearCheck' [disabled]='!playlistFound'
+            >
             <label class='form-check-label' for='clearCheck'>
               Clear playlist
             </label>
           </div>
         </div>
-      <div class='row mt-2 text-muted'>
-        <div class='col'>Tracks will be added to playlist «Discover Daily». If there is none it will be created.</div>
+        <div class='row mt-2 text-muted'>
+          <div class='col'>Tracks will be added to playlist «Discover Daily». If there is none it will be created.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -28,7 +39,27 @@
 
 <div class='row justify-content-center'>
 
-  <div *ngIf='recommendationsFound' class='block text-white bg-dark mb-3 col-12 col-sm-8'>
+  <div class='card text-white bg-dark m-1 col-12 col-sm-5'>
+    <div class='card-body'>
+      <ul class='list-group list-group-flush col-12'>
+        <li class='list-group-item bg-dark text-muted'>
+          <div class='row'>
+            <div class='col'>Genre</div>
+            <div class='col'>Artists</div>
+          </div>
+        </li>
+        <li *ngFor='let genre of genres' class='list-group-item bg-dark text-light'>
+          <div class='row'>
+            <div class='col'>{{genre.name}} | score: {{genre.tracks.length}}</div>
+            <div class='col'>{{genre.artists[0].name}}, {{genre.artists[1].name}}, {{genre.artists[2].name}}, {{genre.artists[3].name}}</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div *ngIf='recommendationsFound' class='card text-white bg-dark m-1 col-12 col-sm-5'>
+    <div class='card-body'>
       <ul class='list-group list-group-flush col-12'>
         <li class='list-group-item bg-dark text-muted'>
           <div class='row'>
@@ -43,14 +74,19 @@
           </div>
         </li>
       </ul>
+    </div>
   </div>
 
-  <div *ngIf='!recommendationsFound && gettingRecommendations' class='block text-white bg-dark mb-3 col-12 col-sm-8'>
+  <div *ngIf='!recommendationsFound && gettingRecommendations' class='card text-white bg-dark m-1 col-12 col-sm-5'>
+    <div class='card-body'>
       Loading...
+    </div>
   </div>
 
-  <div *ngIf='tracksAdded' class='block text-white bg-dark mb-3 col-12 col-sm-8'>
+  <div *ngIf='tracksAdded' class='card text-white bg-dark m-1 col-12 col-sm-5'>
+    <div class='card-body'>
       Tracks have been added to playlist
+    </div>
   </div>
 
 </div>

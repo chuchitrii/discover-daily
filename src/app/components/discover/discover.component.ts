@@ -10,6 +10,7 @@ import { TrackObjectSimplified, UserObjectPublic } from '../../models/spotify-ap
 })
 export class DiscoverComponent implements OnInit {
   recommendedTracks: TrackObjectSimplified[] = [];
+  genres: any = [];
   user: UserObjectPublic;
   playlistId: string;
 
@@ -26,6 +27,12 @@ export class DiscoverComponent implements OnInit {
     this.ds.getUserProfile().then((user) => {
       this.user = user;
     });
+    this.getGenres();
+  }
+
+  getGenres(): void {
+    this.ds.getGenres().then((genres) => this.genres.push(...genres));
+    console.log(this.genres);
   }
 
   getRecommendedTracks(): void {
