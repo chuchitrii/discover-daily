@@ -1,0 +1,13 @@
+
+<ul>
+  <li *ngFor="let genre of selectedGenres">
+    <button (click)="deselectGenre(genre)" class="btn btn-primary">{{genre.name}}</button>
+  </li>
+</ul>
+<ul>
+<ng-container *ngFor="let genre of genreList">
+  <li *ngIf="!genre.isSelected">
+    <button (click)="selectGenre(genre)" class="btn btn-outline-light">{{genre.name}}</button>
+  </li>
+</ng-container>
+</ul>

@@ -1,3 +1,4 @@
+import { GenresStatsComponent } from './components/genres-stats/genres-stats.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
@@ -12,7 +13,15 @@ import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
   imports: [CommonModule, BrowserModule, AppRoutingModule, HttpClientModule],
-  declarations: [AppComponent, LoginComponent, DiscoverComponent, CallbackComponent, HeaderComponent, FooterComponent],
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    DiscoverComponent,
+    CallbackComponent,
+    HeaderComponent,
+    FooterComponent,
+    GenresStatsComponent,
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })

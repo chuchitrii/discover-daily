@@ -14,7 +14,7 @@ export class LoginAuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     if (this.auth.isLoggedIn()) {
-      return this.router.createUrlTree(['/discover-daily']);
+      return this.router.createUrlTree(['']);
     } else {
       return true;
     }

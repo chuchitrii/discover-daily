@@ -8,7 +8,11 @@ import { DiscoverAuthGuard } from './services/guards/discover-auth-guard/discove
 import { LoginAuthGuard } from './services/guards/login-auth-guard/login-auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  {
+    path: '',
+    component: DiscoverComponent,
+    canActivate: [DiscoverAuthGuard],
+  },
   {
     path: 'login',
     component: LoginComponent,
@@ -18,11 +22,6 @@ const routes: Routes = [
     path: 'callback',
     component: CallbackComponent,
     canActivate: [CallbackAuthGuard],
-  },
-  {
-    path: 'discover-daily',
-    component: DiscoverComponent,
-    canActivate: [DiscoverAuthGuard],
   },
 ];
 

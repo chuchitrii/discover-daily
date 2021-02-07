@@ -9,6 +9,12 @@
 
   <div class='card text-white bg-dark m-1 col-12 col-sm-5'>
     <div class='card-body'>
+      <app-genres-stats [genreList]="genres"></app-genres-stats>
+    </div>
+  </div>
+
+  <div class='card text-white bg-dark m-1 col-12 col-sm-5'>
+    <div class='card-body'>
       <div class='row'>
         <div class='col-4 col-sm-2'>
           <button [disabled]='gettingRecommendations' class='btn btn-outline-light' (click)='getRecommendedTracks()'>
@@ -33,28 +39,6 @@
           <div class='col'>Tracks will be added to playlist «Discover Daily». If there is none it will be created.</div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-
-<div class='row justify-content-center'>
-
-  <div class='card text-white bg-dark m-1 col-12 col-sm-5'>
-    <div class='card-body'>
-      <ul class='list-group list-group-flush col-12'>
-        <li class='list-group-item bg-dark text-muted'>
-          <div class='row'>
-            <div class='col'>Genre</div>
-            <div class='col'>Artists</div>
-          </div>
-        </li>
-        <li *ngFor='let genre of genres' class='list-group-item bg-dark text-light'>
-          <div class='row'>
-            <div class='col'>{{genre.name}} | score: {{genre.tracks.length}}</div>
-            <div class='col'>{{genre.artists[0].name}}, {{genre.artists[1].name}}, {{genre.artists[2].name}}, {{genre.artists[3].name}}</div>
-          </div>
-        </li>
-      </ul>
     </div>
   </div>
 

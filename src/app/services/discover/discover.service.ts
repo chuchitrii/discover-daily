@@ -8,9 +8,15 @@ import {
   TrackObjectSimplified,
   UserObjectPublic,
   ArtistObjectFull,
-  ArtistObjectSimplified,
-  TrackObjectFull,
 } from '../../models/spotify-api';
+import {
+  IArtistWithTracks,
+  IGenreModel,
+  GenreModel,
+  IArtistWithTracksAndGenres,
+  ArtistGenreModel,
+  TrackGenreModel,
+} from 'src/app/models/discover.model';
 
 @Injectable({
   providedIn: 'root',
@@ -202,70 +208,5 @@ export class DiscoverService {
     });
     allGenres.sort((a, b) => b.tracks.length - a.tracks.length);
     return allGenres;
-  }
-}
-
-interface IGenreModel {
-  name: string;
-  tracks: ITrackGenreModel[];
-  artists: IArtistGenreModel[];
-}
-
-interface IArtistGenreModel {
-  name: string;
-  id: string;
-  uri: string;
-}
-
-interface ITrackGenreModel {
-  artists: IArtistGenreModel[];
-  id: string;
-  uri: string;
-  preview_url: string;
-}
-
-interface IArtistWithTracks extends ArtistObjectSimplified {
-  tracks: TrackObjectFull[];
-}
-
-interface IArtistWithTracksAndGenres extends IArtistWithTracks {
-  genres: string[];
-}
-
-class GenreModel implements IGenreModel {
-  name: string;
-  tracks: ITrackGenreModel[];
-  artists: IArtistGenreModel[];
-  constructor(name: string, artist: IArtistWithTracksAndGenres, tracks: TrackObjectFull[]) {
-    this.name = name;
-    this.artists = [new ArtistGenreModel(artist)];
-    this.tracks = tracks.map((track) => new TrackGenreModel(track));
-  }
-}
-
-class ArtistGenreModel implements IArtistGenreModel {
-  name: string;
-  id: string;
-  uri: string;
-  constructor(artist: ArtistObjectFull | IArtistWithTracksAndGenres | ArtistObjectSimplified) {
-    this.name = artist.name;
-    this.id = artist.id;
-    this.uri = artist.uri;
-  }
-}
-
-class TrackGenreModel implements ITrackGenreModel {
-  name: string;
-  artists: IArtistGenreModel[];
-  id: string;
-  uri: string;
-  preview_url: string;
-
-  constructor(track: TrackObjectFull) {
-    this.name = track.name;
-    this.artists = track.artists.map((artist) => new ArtistGenreModel(artist));
-    this.id = track.id;
-    this.uri = track.uri;
-    this.preview_url = track.preview_url;
   }
 }

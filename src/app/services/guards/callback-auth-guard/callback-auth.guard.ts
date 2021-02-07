@@ -19,7 +19,7 @@ export class CallbackAuthGuard implements CanActivate {
     const lState = localStorage.getItem('state');
 
     if (this.auth.isLoggedIn()) {
-      return this.router.createUrlTree(['/discover-daily']);
+      return this.router.createUrlTree(['']);
     }
 
     if (queryParams.has('access_token') && lState === qState) {
@@ -27,7 +27,7 @@ export class CallbackAuthGuard implements CanActivate {
       localStorage.setItem('expires_in', queryParams.get('expires_in'));
       localStorage.setItem('accessed_at', Date.now().toString(10));
 
-      return this.router.createUrlTree(['/discover-daily']);
+      return this.router.createUrlTree(['']);
     }
 
     if (queryParams.has('error')) {
