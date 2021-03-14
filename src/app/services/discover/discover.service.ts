@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { SpotifyApiService } from '../spotify-api/spotify-api.service';
 import { image } from '../../models/image';
 import {
+  IGetUserTopArtist,
   PagingObject,
   PlaylistObjectSimplified,
   SavedTrackObject,
@@ -30,12 +31,16 @@ export class DiscoverService {
   constructor(private api: SpotifyApiService) {}
 
   async getRecommendation() {
-    if (this.allSavedTracks.length === 0) this.allSavedTracks = await this.getAllSavedTracks();
+    if (this.allSavedTracks.length === 0) {
+      this.allSavedTracks = await this.getAllSavedTracks();
+    }
     return await this.getAllRecommendedTracks(this.allSavedTracks);
   }
 
   async getGenres(): Promise<GenreModel[]> {
-    if (this.allSavedTracks.length === 0) this.allSavedTracks = await this.getAllSavedTracks();
+    if (this.allSavedTracks.length === 0) {
+      this.allSavedTracks = await this.getAllSavedTracks();
+    }
     const artistsWithTracksAndGenres = await this.getArtistsWithTracksAndGenres(this.allSavedTracks);
     return this.createGenreList(artistsWithTracksAndGenres);
   }
@@ -208,5 +213,9 @@ export class DiscoverService {
     });
     allGenres.sort((a, b) => b.tracks.length - a.tracks.length);
     return allGenres;
+  }
+
+  async getTopArtists(queryParams?: IGetUserTopArtist) {
+    return await this.api.getTopArtists(queryParams).toPromise();
   }
 }

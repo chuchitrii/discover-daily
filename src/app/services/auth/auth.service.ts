@@ -15,7 +15,7 @@ export class AuthService {
     response_type: 'token',
     redirect_uri: environment.callbackUrl,
     scope:
-      'user-read-private user-read-email user-library-modify user-library-read playlist-modify-public playlist-modify-private ugc-image-upload',
+      'user-read-private user-read-email user-library-modify user-library-read playlist-modify-public playlist-modify-private ugc-image-upload user-top-read',
     state: null,
   };
 

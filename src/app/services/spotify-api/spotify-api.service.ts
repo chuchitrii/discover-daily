@@ -34,7 +34,8 @@ export class SpotifyApiService {
     });
   }
 
-  q(object: any): HttpParams {
+  q(object: any): HttpParams | string {
+    if (!object) return '';
     Object.keys(object).forEach((key) => {
       if (Array.isArray(object[key])) {
         object[key] = object[key].join();
@@ -101,7 +102,7 @@ export class SpotifyApiService {
     });
   }
 
-  getTopArtists(queryParams: IGetUserTopArtist): Observable<PagingObject<ArtistObjectFull>> {
+  getTopArtists(queryParams?: IGetUserTopArtist): Observable<PagingObject<ArtistObjectFull>> {
     return this.http.get<PagingObject<ArtistObjectFull>>(`${this.apiBase}v1/me/top/artists?${this.q(queryParams)}`, {
       headers: this.h(),
     });
