@@ -1,19 +1,17 @@
 <div class='row justify-content-center'>
-  <div class='card text-white bg-dark m-1 col-12 col-sm-5'>
-    <div class='card-body'>
-      <div class='row'>
-        <div class='col'>List of genres, that you liked.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class='card text-white bg-dark m-1 col-12 col-sm-5'>
+  <div class='text-white bg-dark col-12 col-sm-4 h-100'>
     <div class='card-body'>
       <app-genres-stats [genreList]="genres"></app-genres-stats>
     </div>
   </div>
 
-  <div class='card text-white bg-dark m-1 col-12 col-sm-5'>
+  <div class='text-white bg-dark col-12 col-sm-4 h-100'>
+    <div class='card-body'>
+      <app-search-filters></app-search-filters>
+    </div>
+  </div>
+
+  <div class='text-white bg-dark col-12 col-sm-4 h-100'>
     <div class='card-body'>
       <div class='row'>
         <div class='col-4 col-sm-2'>
@@ -39,38 +37,7 @@
           <div class='col'>Tracks will be added to playlist «Discover Daily». If there is none it will be created.</div>
         </div>
       </div>
+      <app-playlist></app-playlist>
     </div>
   </div>
-
-  <div *ngIf='recommendationsFound' class='card text-white bg-dark m-1 col-12 col-sm-5'>
-    <div class='card-body'>
-      <ul class='list-group list-group-flush col-12'>
-        <li class='list-group-item bg-dark text-muted'>
-          <div class='row'>
-            <div class='col'>Artist</div>
-            <div class='col'>Track</div>
-          </div>
-        </li>
-        <li *ngFor='let track of recommendedTracks' class='list-group-item bg-dark text-light'>
-          <div class='row'>
-            <div class='col'>{{track.artists[0].name}}</div>
-            <div class='col'>{{track.name}}</div>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <div *ngIf='!recommendationsFound && gettingRecommendations' class='card text-white bg-dark m-1 col-12 col-sm-5'>
-    <div class='card-body'>
-      Loading...
-    </div>
-  </div>
-
-  <div *ngIf='tracksAdded' class='card text-white bg-dark m-1 col-12 col-sm-5'>
-    <div class='card-body'>
-      Tracks have been added to playlist
-    </div>
-  </div>
-
 </div>

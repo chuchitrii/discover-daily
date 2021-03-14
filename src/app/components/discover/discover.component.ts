@@ -32,7 +32,6 @@ export class DiscoverComponent implements OnInit {
 
   getGenres(): void {
     this.ds.getGenres().then((genres) => this.genres.push(...genres));
-    console.log(this.genres);
   }
 
   getRecommendedTracks(): void {

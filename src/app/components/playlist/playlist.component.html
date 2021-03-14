@@ -1,3 +1,5 @@
-<p>
-  playlist works!
-</p>
+<ul>
+  <li *ngFor="let track of tracks">
+      {{track.artists[0]}} - {{track.name}}
+  </li>
+</ul>

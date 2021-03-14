@@ -1,3 +1,5 @@
+import { PlaylistComponent } from './components/playlist/playlist.component';
+import { SearchFiltersComponent } from './components/search-filters/search-filters.component';
 import { GenresStatsComponent } from './components/genres-stats/genres-stats.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -10,9 +12,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
-  imports: [CommonModule, BrowserModule, AppRoutingModule, HttpClientModule],
+  imports: [CommonModule, BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule],
   declarations: [
     AppComponent,
     LoginComponent,
@@ -21,6 +24,8 @@ import { FooterComponent } from './components/footer/footer.component';
     HeaderComponent,
     FooterComponent,
     GenresStatsComponent,
+    SearchFiltersComponent,
+    PlaylistComponent,
   ],
   providers: [],
   bootstrap: [AppComponent],
