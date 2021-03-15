@@ -1,42 +1,27 @@
-<div class='row justify-content-center'>
-  <div class='text-white bg-dark col-12 col-sm-4 h-100'>
-    <div class='card-body'>
+<div class='flex-container-row overflow-y-hidden h-100 flex-grow-1'>
+  <div class='flex-container-column flex-grow-1 h-100 w-100 p-2 box-sizing-border-box'>
+    <div class='p-3 pl-4 box-sizing-border-box bg-lavenderblush'>
+      <h1 class='m-0'><b>Genre Stats</b></h1>
+    </div>
+    <div class='overflow-y-auto h-100 p-3 box-sizing-border-box flex-grow-1 bg-lavender'>
       <app-genres-stats [genreList]="genres"></app-genres-stats>
     </div>
   </div>
 
-  <div class='text-white bg-dark col-12 col-sm-4 h-100'>
-    <div class='card-body'>
+  <div class='flex-container-column flex-grow-1 h-100 w-100 p-2 box-sizing-border-box'>
+    <div class='p-3 pl-4 box-sizing-border-box bg-lavenderblush'>
+      <h1 class='m-0'><b>Search Filters</b></h1>
+    </div>
+    <div class='overflow-auto h-100 p-3 box-sizing-border-box flex-grow-1 bg-lavender'>
       <app-search-filters></app-search-filters>
     </div>
   </div>
 
-  <div class='text-white bg-dark col-12 col-sm-4 h-100'>
-    <div class='card-body'>
-      <div class='row'>
-        <div class='col-4 col-sm-2'>
-          <button [disabled]='gettingRecommendations' class='btn btn-outline-light' (click)='getRecommendedTracks()'>
-            Recommend
-          </button>
-        </div>
-        <div class='col-3 col-sm-7'>
-          <button [disabled]='!recommendationsFound' class='btn btn-outline-light' (click)='addTracksToPlaylist()'>Add
-          </button>
-        </div>
-        <div class='col-5 col-sm-3 checkbox-center'>
-          <div class='form-check'>
-            <input class='form-check-input' type='checkbox' [checked]='clear' (change)='clearChange()' value=''
-              id='clearCheck' [disabled]='!playlistFound'
-            >
-            <label class='form-check-label' for='clearCheck'>
-              Clear playlist
-            </label>
-          </div>
-        </div>
-        <div class='row mt-2 text-muted'>
-          <div class='col'>Tracks will be added to playlist «Discover Daily». If there is none it will be created.</div>
-        </div>
-      </div>
+  <div class='flex-container-column flex-grow-1 h-100 w-100 p-2 box-sizing-border-box'>
+    <div class='p-3 pl-4 box-sizing-border-box bg-lavenderblush'>
+      <h1 class='m-0'><b>Recommended Playlist</b></h1>
+    </div>
+    <div class='overflow-auto h-100 p-3 box-sizing-border-box flex-grow-1 bg-lavender'>
       <app-playlist></app-playlist>
     </div>
   </div>

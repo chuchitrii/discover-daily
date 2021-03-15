@@ -5,18 +5,41 @@ $enable-responsive-font-sizes: true;
 @import '~bootstrap/dist/css/bootstrap.min.css';
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@900&display=swap');
 
+html, body {
+  height: 100%;
+}
+
 body {
-  background-color: #000000;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.bg-black {
-  background-color: #000000;
-}
-
-.block {
+.flex-container-column {
   display: flex;
-  padding: 1rem 2rem;
+  flex-direction: column;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.flex-container-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.box-sizing-border-box {
+  box-sizing: border-box;
+}
+
+.overflow-y-hidden {
+  overflow-y: hidden;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+.bg-lavender {
+  background-color: lavender;
+}
+
+.bg-lavenderblush {
+  background-color: lavenderblush;
+}

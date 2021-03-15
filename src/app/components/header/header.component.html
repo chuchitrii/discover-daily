@@ -1,12 +1,8 @@
-<div class='row justify-content-center'>
-  <div class='col-12 col-sm-8 header-container'>
-    <div class='row'>
-    <div class='app-name col-8 col-sm-8'>
+  <div class='flex-container-row p-3 box-sizing-border-box'>
+    <div class='flex-container-column app-name w-100'>
       discover daily
     </div>
-    <div class='user-info col-4 col-sm-4'>
-      <button *ngIf='isLoggedIn' class='btn btn-outline-light float-end mt-1' (click)="logout()">Logout</button>
-    </div>
+    <div class='flex-container-column w-100 align-items-end'>
+      <button *ngIf='isLoggedIn' class='btn btn-outline-dark' (click)="logout()">Logout</button>
     </div>
   </div>
-</div>

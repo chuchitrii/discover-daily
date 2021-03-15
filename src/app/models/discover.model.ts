@@ -1,4 +1,4 @@
-import { TrackObjectFull, ArtistObjectSimplified, ArtistObjectFull } from '../models/spotify-api';
+import { TrackObjectFull, ArtistObjectSimplified, ArtistObjectFull } from './spotify-api';
 
 export interface IGenreModel {
   name: string;

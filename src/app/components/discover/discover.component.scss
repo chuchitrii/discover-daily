@@ -1,3 +1,8 @@
+:host {
+  height: 100%;
+  overflow-y: hidden;
+}
+
 .checkbox-center {
   display: flex;
   flex-direction: column;
