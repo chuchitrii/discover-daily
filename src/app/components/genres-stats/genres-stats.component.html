@@ -1,13 +1,8 @@
-<ul>
-  <li *ngFor="let genre of selectedGenres">
-    <button (click)="deselectGenre(genre)" class="btn btn-primary">{{genre.name}}</button>
-  </li>
-</ul>
-<ul>
-  <ng-container *ngFor="let genre of genreList">
-    <li *ngIf="!genre.isSelected" (click)="selectGenre(genre)" class='flex-container-row'>
-      <div class='flex-grow-1'>{{genre.name}}</div>
-      <div class='flex-grow-1'>{{genre.artists}}</div>
-    </li>
-  </ng-container>
-</ul>
+<div *ngFor="let genre of selectedGenres" (click)="unselectGenre(genre)" class='flex-container-row bg-lavenderblush p-2 mt-1'>
+  {{genre.name}}
+</div>
+<ng-container *ngFor="let genre of genreList">
+  <div *ngIf="!genre.isSelected" (click)="selectGenre(genre)" class='flex-container-row bg-lavender p-2 mt-1'>
+    {{genre.name}}
+  </div>
+</ng-container>

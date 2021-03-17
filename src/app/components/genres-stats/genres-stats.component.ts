@@ -22,7 +22,7 @@ export class GenresStatsComponent implements OnInit {
     this.selectedGenres.push(genre);
   }
 
-  deselectGenre(genre: GenreModel) {
+  unselectGenre(genre: GenreModel) {
     genre.isSelected = false;
     this.selectedGenres.splice(this.selectedGenres.indexOf(genre), 1);
   }
