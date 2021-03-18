@@ -1,0 +1,17 @@
+.genre {
+  display: flex;
+  flex-direction: row;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+  background-color: lavender;
+  padding: 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.genre.selected {
+  background-color: lavenderblush;
+}
+
+.genre:first-of-type {
+  margin-top: 0;
+}

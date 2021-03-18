@@ -1,8 +1,8 @@
-<div *ngFor="let genre of selectedGenres" (click)="unselectGenre(genre)" class='flex-container-row bg-lavenderblush p-2 mt-1'>
+<div *ngFor="let genre of selectedGenres" (click)="unselectGenre(genre)" class='genre selected'>
   {{genre.name}}
 </div>
 <ng-container *ngFor="let genre of genreList">
-  <div *ngIf="!genre.isSelected" (click)="selectGenre(genre)" class='flex-container-row bg-lavender p-2 mt-1'>
+  <div *ngIf="!genre.isSelected" (click)="selectGenre(genre)" class='genre'>
     {{genre.name}}
   </div>
 </ng-container>

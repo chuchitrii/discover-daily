@@ -24,6 +24,11 @@ body {
   flex-direction: row;
 }
 
+.flex-container-row-revers {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
 .box-sizing-border-box {
   box-sizing: border-box;
 }
