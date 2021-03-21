@@ -1,14 +1,6 @@
-<div class='input-container'>
-  <div class='input-label'>
-    valence
-  </div>
-  <div class='mat-slider-container w-75'>
-    <mat-slider class='w-100'
-    [color]='"primary"'
-    [min]='0'
-    [max]='1'
-    [step]='0.05'
-    [thumbLabel]='true'
-  ></mat-slider>
-  </div>
+<form [formGroup]='form'>
+<div *ngFor='let input of inputs' class='input-container'>
+  <label [for]='input.name'>{{input.name}}</label>
+  <input [formControlName]='input.name' [id]='input.name' type='range'>
 </div>
+</form>
