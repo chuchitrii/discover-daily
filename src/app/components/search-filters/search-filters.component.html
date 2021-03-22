@@ -1,6 +1,13 @@
 <form [formGroup]='form'>
 <div *ngFor='let input of inputs' class='input-container'>
   <label [for]='input.name'>{{input.name}}</label>
-  <input [formControlName]='input.name' [id]='input.name' type='range'>
+  <input
+    type='range'
+    [formControlName]='input.name'
+    [id]='input.name'
+    [min]='input.min ? input.min : 0'
+    [max]='input.max ? input.max : 1'
+    [step]='input.step ? input.step : 0.1'
+  >
 </div>
 </form>
