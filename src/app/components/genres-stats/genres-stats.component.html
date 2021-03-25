@@ -1,8 +1,16 @@
 <div *ngFor="let genre of selectedGenres" (click)="unselectGenre(genre)" class='genre selected'>
-  {{genre.name}}
+  <b>{{genre.name}}</b>
 </div>
 <ng-container *ngFor="let genre of genreList">
   <div *ngIf="!genre.isSelected" (click)="selectGenre(genre)" class='genre'>
-    {{genre.name}}
+    <div class='w-25'>
+      <b>{{genre.name}}</b>
+    </div>
+    <div class='w-25'>
+      <b>{{genre.tracks.length}}</b> tracks
+    </div>
+    <div class='w-50'>
+      {{genre?.artists[ds.getRandomInt(genre.artists.length)]?.name}}, {{genre?.artists[ds.getRandomInt(genre.artists.length)]?.name}} ...
+    </div>
   </div>
 </ng-container>

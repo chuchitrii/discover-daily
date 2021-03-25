@@ -15,8 +15,8 @@ import {
   IGenreModel,
   GenreModel,
   IArtistWithTracksAndGenres,
-  ArtistGenreModel,
-  TrackGenreModel,
+  ArtistModel,
+  TrackModel,
 } from 'src/app/models/discover.model';
 
 @Injectable({
@@ -30,11 +30,11 @@ export class DiscoverService {
 
   constructor(private api: SpotifyApiService) {}
 
-  async getRecommendation() {
+  async getRecommendation(count?: number, selectedGenres?: GenreModel[], filter?) {
     if (this.allSavedTracks.length === 0) {
       this.allSavedTracks = await this.getAllSavedTracks();
     }
-    return await this.getAllRecommendedTracks(this.allSavedTracks);
+    return await this.getAllRecommendedTracks(this.allSavedTracks, count, selectedGenres, filter);
   }
 
   async getGenres(): Promise<GenreModel[]> {
@@ -121,8 +121,13 @@ export class DiscoverService {
     return savedTracks;
   }
 
-  async getAllRecommendedTracks(savedTracks: SavedTrackObject[], count = 30): Promise<TrackObjectSimplified[]> {
-    const q = { limit: 5, seed_tracks: [] };
+  async getAllRecommendedTracks(
+    savedTracks: SavedTrackObject[],
+    count = 30,
+    selectedGenres?: GenreModel[],
+    filter?
+  ): Promise<TrackObjectSimplified[]> {
+    const q = { limit: 50, seed_tracks: [] };
     const length = 5;
     const recommendedTracks: TrackObjectSimplified[] = [];
 
@@ -204,8 +209,8 @@ export class DiscoverService {
       artist.genres.forEach((genre) => {
         const i = allGenres.findIndex((genreModel) => genreModel.name === genre);
         if (i > -1) {
-          allGenres[i].artists.push(new ArtistGenreModel(artist));
-          allGenres[i].tracks.push(...artist.tracks.map((track) => new TrackGenreModel(track)));
+          allGenres[i].artists.push(new ArtistModel(artist));
+          allGenres[i].tracks.push(...artist.tracks.map((track) => new TrackModel(track)));
         } else {
           allGenres.push(new GenreModel(genre, artist, artist.tracks));
         }

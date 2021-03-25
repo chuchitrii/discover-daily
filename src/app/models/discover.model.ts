@@ -2,19 +2,19 @@ import { TrackObjectFull, ArtistObjectSimplified, ArtistObjectFull } from './spo
 
 export interface IGenreModel {
   name: string;
-  tracks: ITrackGenreModel[];
-  artists: IArtistGenreModel[];
+  tracks: ITrackModel[];
+  artists: IArtistModel[];
   isSelected: boolean;
 }
 
-export interface IArtistGenreModel {
+export interface IArtistModel {
   name: string;
   id: string;
   uri: string;
 }
 
-export interface ITrackGenreModel {
-  artists: IArtistGenreModel[];
+export interface ITrackModel {
+  artists: IArtistModel[];
   id: string;
   uri: string;
   preview_url: string;
@@ -30,18 +30,18 @@ export interface IArtistWithTracksAndGenres extends IArtistWithTracks {
 
 export class GenreModel implements IGenreModel {
   name: string;
-  tracks: ITrackGenreModel[];
-  artists: IArtistGenreModel[];
+  tracks: ITrackModel[];
+  artists: IArtistModel[];
   isSelected: boolean;
   constructor(name: string, artist: IArtistWithTracksAndGenres, tracks: TrackObjectFull[]) {
     this.name = name;
-    this.artists = [new ArtistGenreModel(artist)];
-    this.tracks = tracks.map((track) => new TrackGenreModel(track));
+    this.artists = [new ArtistModel(artist)];
+    this.tracks = tracks.map((track) => new TrackModel(track));
     this.isSelected = false;
   }
 }
 
-export class ArtistGenreModel implements IArtistGenreModel {
+export class ArtistModel implements IArtistModel {
   name: string;
   id: string;
   uri: string;
@@ -52,16 +52,16 @@ export class ArtistGenreModel implements IArtistGenreModel {
   }
 }
 
-export class TrackGenreModel implements ITrackGenreModel {
+export class TrackModel implements ITrackModel {
   name: string;
-  artists: IArtistGenreModel[];
+  artists: IArtistModel[];
   id: string;
   uri: string;
   preview_url: string;
 
   constructor(track: TrackObjectFull) {
     this.name = track.name;
-    this.artists = track.artists.map((artist) => new ArtistGenreModel(artist));
+    this.artists = track.artists.map((artist) => new ArtistModel(artist));
     this.id = track.id;
     this.uri = track.uri;
     this.preview_url = track.preview_url;

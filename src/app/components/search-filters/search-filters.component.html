@@ -1,13 +1,49 @@
 <form [formGroup]='form'>
-<div *ngFor='let input of inputs' class='input-container'>
-  <label [for]='input.name'>{{input.name}}</label>
-  <input
-    type='range'
-    [formControlName]='input.name'
-    [id]='input.name'
-    [min]='input.min ? input.min : 0'
-    [max]='input.max ? input.max : 1'
-    [step]='input.step ? input.step : 0.1'
-  >
-</div>
+  <div *ngFor='let input of inputs' class='input-container'>
+    <div class='w-25'>
+      <b>{{input.name}}</b>
+    </div>
+    <div class='w-25'>
+      <label>
+        min
+        <input
+          class='w-100'
+          type='number'
+          [id]='input.name'
+          [formControlName]='"min_" + input.name'
+          [min]='input.min ? input.min : 0'
+          [max]='input.max ? input.max : 1'
+          [step]='input.step ? input.step : 0.1'
+        >
+      </label>
+    </div>
+    <div class='w-25'>
+      <label>
+        target
+        <input
+          class='w-100'
+          type='number'
+          [id]='input.name'
+          [formControlName]='"target_" + input.name'
+          [min]='input.min ? input.min : 0'
+          [max]='input.max ? input.max : 1'
+          [step]='input.step ? input.step : 0.1'
+        >
+      </label>
+    </div>
+    <div class='w-25'>
+      <label>
+        max
+        <input
+          class='w-100'
+          type='number'
+          [id]='input.name'
+          [formControlName]='"max_" + input.name'
+          [min]='input.min ? input.min : 0'
+          [max]='input.max ? input.max : 1'
+          [step]='input.step ? input.step : 0.1'
+        >
+      </label>
+    </div>
+  </div>
 </form>

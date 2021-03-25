@@ -48,10 +48,13 @@ export class SearchFiltersComponent implements OnInit {
   ngOnInit() {
     this.form = new FormGroup({});
     this.inputs.forEach((input) => {
-      this.form.addControl(input.name, new FormControl());
-      this.filters[input.name] = null;
+      this.form.addControl('min_' + input.name, new FormControl());
+      this.form.addControl('target_' + input.name, new FormControl());
+      this.form.addControl('max_' + input.name, new FormControl());
+      this.filters['min_' + input.name] = null;
+      this.filters['target_' + input.name] = null;
+      this.filters['max_' + input.name] = null;
     });
-    console.log(this.form);
     this.form.reset(this.filters);
     this.form.valueChanges.subscribe((ch) => {
       console.log(ch);

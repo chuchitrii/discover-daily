@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GenreModel } from '../../models/discover.model';
+import { DiscoverService } from '../../services/discover/discover.service';
 
 @Component({
   selector: 'app-genres-stats',
@@ -10,7 +11,7 @@ export class GenresStatsComponent implements OnInit {
   @Input() genreList: GenreModel[] = [];
   selectedGenres: GenreModel[] = [];
 
-  constructor() {}
+  constructor(public ds: DiscoverService) {}
 
   ngOnInit() {
     console.log(this.genreList);
