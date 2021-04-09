@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SpotifyApiService } from '../../services/spotify-api/spotify-api.service';
 import { DiscoverService } from '../../services/discover/discover.service';
 import { TrackObjectSimplified, UserObjectPublic } from '../../models/spotify-api';
+import { RecommendationsOptions } from '../../models/discover.model';
 
 @Component({
   selector: 'app-discover',
@@ -13,6 +14,7 @@ export class DiscoverComponent implements OnInit {
   genres: any = [];
   user: UserObjectPublic;
   playlistId: string;
+  filters: any = new RecommendationsOptions();
 
   clear = false;
   recommendationsFound = false;
@@ -31,7 +33,7 @@ export class DiscoverComponent implements OnInit {
   }
 
   getGenres(): void {
-    this.ds.getGenres().then((genres) => this.genres.push(...genres));
+    this.ds.getGenres().then((genres) => (this.genres = [...genres]));
   }
 
   getRecommendedTracks(): void {
@@ -40,11 +42,19 @@ export class DiscoverComponent implements OnInit {
     this.recommendationsFound = false;
     this.findPlaylist();
     this.recommendedTracks = [];
-    this.ds.getRecommendation().then((r) => {
-      this.recommendedTracks.push(...r);
-      this.gettingRecommendations = false;
-      this.recommendationsFound = true;
-    });
+    this.genres.filter((genre) => genre.isSelected);
+    this.ds
+      .getRecommendation(
+        30,
+        this.genres.filter((genre) => genre.isSelected),
+        this.filters
+      )
+      .then((r) => {
+        console.log(r);
+        this.recommendedTracks.push(...r);
+        this.gettingRecommendations = false;
+        this.recommendationsFound = true;
+      });
   }
 
   addTracksToPlaylist(): void {

@@ -65,9 +65,9 @@ export interface RecommendationsOptionsObject {
   min_tempo?: number;
   min_time_signature?: number;
   min_valence?: number;
-  seed_artists?: string[] | string; // Array of strings or Comma separated string
-  seed_genres?: string[] | string; // Array of strings or Comma separated string
-  seed_tracks?: string[] | string; // Array of strings or Comma separated string
+  seed_artists?: string[];
+  seed_genres?: string[];
+  seed_tracks?: string[]; // Array of strings or Comma separated string
   target_acousticness?: number;
   target_danceability?: number;
   target_duration_ms?: number;

@@ -2,21 +2,24 @@ import { Injectable } from '@angular/core';
 import { SpotifyApiService } from '../spotify-api/spotify-api.service';
 import { image } from '../../models/image';
 import {
+  ArtistObjectFull,
   IGetUserTopArtist,
   PagingObject,
   PlaylistObjectSimplified,
+  RecommendationsOptionsObject,
   SavedTrackObject,
   TrackObjectSimplified,
   UserObjectPublic,
-  ArtistObjectFull,
 } from '../../models/spotify-api';
 import {
-  IArtistWithTracks,
-  IGenreModel,
-  GenreModel,
-  IArtistWithTracksAndGenres,
   ArtistModel,
+  GenreModel,
+  IArtistWithTracks,
+  IArtistWithTracksAndGenres,
+  IGenreModel,
+  GenreForRecommendation,
   TrackModel,
+  IGenreForRecommendation,
 } from 'src/app/models/discover.model';
 
 @Injectable({
@@ -25,12 +28,13 @@ import {
 export class DiscoverService {
   defaultQ = { offset: 0, limit: 50 };
   allSavedTracks: SavedTrackObject[] = [];
-  artistsWithTracks: IArtistWithTracks[] = [];
-  genreList: IGenreModel[] = [];
+  recommendationGenres: GenreForRecommendation[] = [];
+  recommendedTracks;
 
   constructor(private api: SpotifyApiService) {}
 
   async getRecommendation(count?: number, selectedGenres?: GenreModel[], filter?) {
+    console.log(filter);
     if (this.allSavedTracks.length === 0) {
       this.allSavedTracks = await this.getAllSavedTracks();
     }
@@ -60,8 +64,6 @@ export class DiscoverService {
       playlist = await this.api.createPlaylist(body, user).toPromise();
       playlistId = playlist.id;
     }
-
-    console.log('playlist id: ', playlistId);
 
     if (clear) {
       return await this.api.replaceTracksInPlaylist(queryParams, playlistId).toPromise();
@@ -125,25 +127,81 @@ export class DiscoverService {
     savedTracks: SavedTrackObject[],
     count = 30,
     selectedGenres?: GenreModel[],
-    filter?
+    filter?: Partial<RecommendationsOptionsObject>
   ): Promise<TrackObjectSimplified[]> {
     const q = { limit: 50, seed_tracks: [] };
     const length = 5;
     const recommendedTracks: TrackObjectSimplified[] = [];
+    let notEnoughTracks: boolean;
 
-    do {
-      q.seed_tracks = Array(length)
-        .fill(null)
-        .map(() => savedTracks[this.getRandomInt(savedTracks.length)].track.id);
-      const res = await this.api.getRecommendedTracks(q).toPromise();
-      const filtered = await this.filterTracks(res.tracks);
-      recommendedTracks.push(...filtered);
-    } while (recommendedTracks.length < count);
+    if (selectedGenres.length > 0) {
+      this.recommendationGenres = selectedGenres.reduce((acc, currentValue) => {
+        acc.push(new GenreForRecommendation(currentValue));
+        return acc;
+      }, []);
 
+      await this.fillRecommendationsGenres({ ...q, ...filter }, ...this.recommendationGenres);
+
+      const quantity = Math.floor(count / this.recommendationGenres.length);
+      do {
+        if (!this.recommendationGenres.length) notEnoughTracks = true;
+        for (const genre of this.recommendationGenres) {
+          if (!genre.tracksFromResponse.length) {
+            await this.fillRecommendationsGenres({ ...q, ...filter }, genre);
+          }
+          if (genre.toDelete) continue;
+          recommendedTracks.push(...genre.tracksFromResponse.slice(0, quantity));
+          genre.tracksFromResponse.splice(0, quantity);
+        }
+        this.clearRecommendationGenres();
+      } while (!notEnoughTracks && recommendedTracks.length < count);
+    } else {
+      q.limit = 5;
+      do {
+        q.seed_tracks = Array(length)
+          .fill(null)
+          .map(() => savedTracks[this.getRandomInt(savedTracks.length)].track.id);
+        const res = await this.api.getRecommendedTracks(q).toPromise();
+        const filtered = await this.filterTracks(res.tracks);
+        recommendedTracks.push(...filtered);
+      } while (recommendedTracks.length < count);
+    }
     return recommendedTracks;
   }
 
+  async fillRecommendationsGenres(q, ...genres: IGenreForRecommendation[]) {
+    for (const genre of genres) {
+      q.seed_tracks = [];
+      if (genre.tracksForRequest.length <= 5) {
+        q.seed_tracks.push(...genre.tracksForRequest);
+        genre.tracksForRequest = [];
+      } else {
+        for (let i = 0; i < 5; i++) {
+          if (!genre.tracksForRequest.length) {
+            break;
+          }
+          const index = this.getRandomInt(genre.tracksForRequest.length);
+          q.seed_tracks.push(genre.tracksForRequest[index]);
+          genre.tracksForRequest.splice(index, 1);
+        }
+      }
+      if (!q.seed_tracks.length) {
+        genre.toDelete = true;
+        continue;
+      }
+      const res = await this.api.getRecommendedTracks(q).toPromise();
+      const filtered = await this.filterTracks(res.tracks);
+      genre.tracksFromResponse.push(...filtered);
+    }
+  }
+
+  clearRecommendationGenres() {
+    this.recommendationGenres = this.recommendationGenres.filter((genre) => !genre.toDelete);
+  }
+
   async filterTracks(tracks: TrackObjectSimplified[]) {
+    if (!tracks.length) return tracks;
+
     const queryParams = { ids: tracks.map((t) => t.id) };
     const mask = await this.api.getFilterMask(queryParams).toPromise();
 

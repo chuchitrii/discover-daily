@@ -13,7 +13,7 @@
       <h1 class='m-0'><b>Search Filters</b></h1>
     </div>
     <div class='overflow-auto h-100 p-3 box-sizing-border-box flex-grow-1 bg-lavender'>
-      <app-search-filters></app-search-filters>
+      <app-search-filters [filters]='filters'></app-search-filters>
     </div>
   </div>
 
@@ -22,7 +22,9 @@
       <h1 class='m-0'><b>Recommended Playlist</b></h1>
     </div>
     <div class='overflow-auto h-100 p-3 box-sizing-border-box flex-grow-1 bg-lavender'>
-      <app-playlist></app-playlist>
+      <button (click)='getRecommendedTracks()'>Recommend</button>
+      <button (click)='addTracksToPlaylist()'>Add</button>
+      <app-playlist [tracks]='recommendedTracks'></app-playlist>
     </div>
   </div>
 </div>

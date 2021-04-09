@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   ArtistObjectFull,
   IAddTracksToPlaylist,
@@ -18,6 +18,7 @@ import {
   UserObjectPublic,
   MultipleArtistsResponse,
 } from '../../models/spotify-api';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -35,13 +36,19 @@ export class SpotifyApiService {
   }
 
   q(object: any): HttpParams | string {
-    if (!object) return '';
+    const fromObject = {};
+    if (!object) {
+      return '';
+    }
     Object.keys(object).forEach((key) => {
+      if (object[key] !== null && object[key] !== undefined) {
+        fromObject[key] = object[key];
+      }
       if (Array.isArray(object[key])) {
-        object[key] = object[key].join();
+        fromObject[key] = object[key].join();
       }
     });
-    return new HttpParams({ fromObject: object });
+    return new HttpParams({ fromObject });
   }
 
   authRequest(queryParams: IAuthQueryParams): void {
@@ -66,10 +73,17 @@ export class SpotifyApiService {
     });
   }
 
-  getRecommendedTracks(queryParams: RecommendationsOptionsObject): Observable<RecommendationsObject> {
-    return this.http.get<RecommendationsObject>(`${this.apiBase}v1/recommendations?${this.q(queryParams)}`, {
-      headers: this.h(),
-    });
+  getRecommendedTracks(queryParams: RecommendationsOptionsObject): Observable<RecommendationsObject> | Observable<any> {
+    return this.http
+      .get<RecommendationsObject>(`${this.apiBase}v1/recommendations?${this.q(queryParams)}`, {
+        headers: this.h(),
+      })
+      .pipe(
+        catchError((e) => {
+          console.warn(e);
+          return of([]);
+        })
+      );
   }
 
   getFilterMask(queryParams: { ids: string[] }): Observable<Array<boolean>> {

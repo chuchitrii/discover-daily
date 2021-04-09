@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
@@ -7,7 +7,7 @@ import { FormControl, FormGroup } from '@angular/forms';
   styleUrls: ['./search-filters.component.scss'],
 })
 export class SearchFiltersComponent implements OnInit {
-  filters: any = {};
+  @Input() filters: any = {};
   form: FormGroup;
   inputs: { name: string; min?: number; max?: number; step?: number }[] = [
     {
@@ -57,7 +57,7 @@ export class SearchFiltersComponent implements OnInit {
     });
     this.form.reset(this.filters);
     this.form.valueChanges.subscribe((ch) => {
-      console.log(ch);
+      Object.assign(this.filters, this.form.getRawValue());
     });
   }
 }

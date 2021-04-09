@@ -1,4 +1,10 @@
-import { TrackObjectFull, ArtistObjectSimplified, ArtistObjectFull } from './spotify-api';
+import {
+  TrackObjectFull,
+  ArtistObjectSimplified,
+  ArtistObjectFull,
+  TrackObjectSimplified,
+  RecommendationsOptionsObject,
+} from './spotify-api';
 
 export interface IGenreModel {
   name: string;
@@ -67,3 +73,26 @@ export class TrackModel implements ITrackModel {
     this.preview_url = track.preview_url;
   }
 }
+
+export interface IGenreForRecommendation {
+  genreName: string;
+  tracksForRequest: string[];
+  tracksFromResponse: TrackObjectSimplified[];
+  toDelete: boolean;
+}
+
+export class GenreForRecommendation implements IGenreForRecommendation {
+  genreName: string;
+  tracksForRequest: string[];
+  tracksFromResponse: TrackObjectSimplified[];
+  toDelete: boolean;
+
+  constructor(genre: GenreModel) {
+    this.genreName = genre.name;
+    this.tracksForRequest = genre.tracks.map((track) => track.id);
+    this.tracksFromResponse = [];
+    this.toDelete = false;
+  }
+}
+
+export class RecommendationsOptions implements RecommendationsOptionsObject {}
