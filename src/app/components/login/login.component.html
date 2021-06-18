@@ -1,11 +1,20 @@
-<div class='row justify-content-center'>
-  <div class='block text-white bg-dark mb-3 col-12 col-sm-8'>
-    <p>
-      This app will add playlist of recommendations based on your saved tracks.
-    </p>
-    <p>
-      First of all you need to login with your spotify account.
-    </p>
-    <button class='btn btn-outline-light' (click)='redirect()'>Login</button>
+<div class='discover-main-body'>
+  <div class='discover-card h-50 grow-0' [style.width]='device.isMobile() ? "100%" : "50%"'>
+    <div class='discover-card-header justify-content-between'>
+      <div>
+        <h1 class='m-0 center-me'><b>Hello there</b></h1>
+      </div>
+      <div class='justify-self-end'>
+        <button  (click)='redirect()'>Login</button>
+      </div>
+    </div>
+    <div class='discover-card-body'>
+      <p>
+        This app will generate playlist of recommendations based on your saved tracks.
+      </p>
+      <p>
+        First of all you need to login with your spotify account.
+      </p>
+    </div>
   </div>
 </div>

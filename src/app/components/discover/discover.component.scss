@@ -1,10 +1,37 @@
+@import "src/styles";
+
 :host {
   height: 100%;
   overflow-y: hidden;
-}
-
-.checkbox-center {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+}
+
+.discover-footer {
+  margin: 0 0.8rem;
+  padding: 0 1rem 0.5rem 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-radius: $discover-card-radius $discover-card-radius 0 0;
+  border: 2px solid $discover-card-border-color;
+  border-bottom: 0 solid $discover-card-border-color;
+  background-color: lavender;
+}
+
+.discover-footer {
+  button {
+    background-color: lavender;
+    border: 2px solid lavender;
+    border-radius: 0;
+  }
+  button.pressed {
+    border-bottom: 2px solid $discover-card-border-color;
+    color: #000000;
+  }
+
+  button:focus {
+    border-bottom: 2px solid #000000;
+    color: #000000;
+  }
 }

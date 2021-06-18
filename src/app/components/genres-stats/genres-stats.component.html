@@ -1,15 +1,29 @@
-<div *ngFor="let genre of selectedGenres" (click)="unselectGenre(genre)" class='genre selected'>
-  <b>{{genre.name}}</b>
-</div>
 <ng-container *ngFor="let genre of genreList">
-  <div *ngIf="!genre.isSelected" (click)="selectGenre(genre)" class='genre'>
-    <div class='w-25'>
+  <div *ngIf="genre.isSelected" (click)="unselectGenre(genre)" class='list-item selectable selected'>
+    <div [style.display]='device.isMobile() ? "none" : "flex"' class='list-item-column dot'>
+    </div>
+    <div class='list-item-column w-40'>
       <b>{{genre.name}}</b>
     </div>
-    <div class='w-25'>
-      <b>{{genre.tracks.length}}</b> tracks
+    <div [style.justify-content]='device.isMobile() ? "center" : "flex-start"' class='list-item-column w-20'>
+      <b>{{genre.tracks.length}}</b> <span *ngIf='!device.isMobile()'>tracks</span>
     </div>
-    <div class='w-50'>
+    <div class='list-item-column w-40'>
+      {{genre?.artists[ds.getRandomInt(genre.artists.length)]?.name}}, {{genre?.artists[ds.getRandomInt(genre.artists.length)]?.name}} ...
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngFor="let genre of genreList">
+  <div *ngIf="!genre.isSelected" (click)="selectGenre(genre)" class='list-item selectable'>
+    <div [style.display]='device.isMobile() ? "none" : "flex"' class='list-item-column dot'>
+    </div>
+    <div class='list-item-column w-40'>
+      <b>{{genre.name}}</b>
+    </div>
+    <div [style.justify-content]='device.isMobile() ? "center" : "flex-start"' class='list-item-column w-20'>
+      <b>{{genre.tracks.length}}</b> <span *ngIf='!device.isMobile()'>tracks</span>
+    </div>
+    <div class='list-item-column w-40'>
       {{genre?.artists[ds.getRandomInt(genre.artists.length)]?.name}}, {{genre?.artists[ds.getRandomInt(genre.artists.length)]?.name}} ...
     </div>
   </div>

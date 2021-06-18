@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { GenreModel } from '../../models/discover.model';
 import { DiscoverService } from '../../services/discover/discover.service';
+import { DeviceService } from '../../services/device/device.service';
 
 @Component({
   selector: 'app-genres-stats',
@@ -10,19 +11,16 @@ import { DiscoverService } from '../../services/discover/discover.service';
 })
 export class GenresStatsComponent implements OnInit {
   @Input() genreList: GenreModel[];
-  selectedGenres: GenreModel[] = [];
 
-  constructor(public ds: DiscoverService) {}
+  constructor(public ds: DiscoverService, public device: DeviceService) {}
 
   ngOnInit() {}
 
   selectGenre(genre: GenreModel) {
     genre.isSelected = true;
-    this.selectedGenres.push(genre);
   }
 
   unselectGenre(genre: GenreModel) {
     genre.isSelected = false;
-    this.selectedGenres.splice(this.selectedGenres.indexOf(genre), 1);
   }
 }

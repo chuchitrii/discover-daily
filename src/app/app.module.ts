@@ -14,10 +14,20 @@ import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material/slider';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SearchFiltersPrettyComponent } from './components/search-filters-pretty/search-filters-pretty.component';
 
 @NgModule({
-  imports: [CommonModule, BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, MatSliderModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    MatSliderModule,
+    ReactiveFormsModule,
+    FormsModule,
+  ],
   declarations: [
     AppComponent,
     LoginComponent,
@@ -28,6 +38,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     GenresStatsComponent,
     SearchFiltersComponent,
     PlaylistComponent,
+    SearchFiltersPrettyComponent,
   ],
   providers: [],
   bootstrap: [AppComponent],

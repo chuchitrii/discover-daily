@@ -1,30 +1,94 @@
-<div class='flex-container-row overflow-y-hidden h-100 flex-grow-1'>
-  <div class='flex-container-column flex-grow-1 h-100 w-100 p-2 box-sizing-border-box'>
-    <div class='p-3 pl-4 box-sizing-border-box bg-lavenderblush'>
-      <h1 class='m-0'><b>Genre Stats</b></h1>
-    </div>
-    <div class='overflow-y-auto h-100 p-3 box-sizing-border-box flex-grow-1 bg-lavender'>
-      <app-genres-stats [genreList]="genres"></app-genres-stats>
-    </div>
-  </div>
+<div class='discover-main-body'>
 
-  <div class='flex-container-column flex-grow-1 h-100 w-100 p-2 box-sizing-border-box'>
-    <div class='p-3 pl-4 box-sizing-border-box bg-lavenderblush'>
-      <h1 class='m-0'><b>Search Filters</b></h1>
+  <ng-container *ngIf='genresLoaded; else genresLoading'>
+    <div [style.display]='device.isMobile() && !tabVisibility.genre ? "none" : "flex" ' class='discover-card'>
+      <div class='discover-card-header'>
+        <div class='discover-card-header-column'>
+          <ng-container *ngIf='!device.isMobile(); else genresMobileTitle'>
+            <h4 class='m-0'><b>Genre Stats</b></h4>
+          </ng-container>
+          <ng-template #genresMobileTitle>
+            <h4 class='m-0'><b>Genres</b></h4>
+          </ng-template>
+        </div>
+        <div class='discover-card-header-column p-1'>
+          <button class='small-button' (click)='clearGenres()'>clear</button>
+        </div>
+      </div>
+      <div class='discover-card-body'>
+        <app-genres-stats [genreList]='genres'></app-genres-stats>
+      </div>
     </div>
-    <div class='overflow-auto h-100 p-3 box-sizing-border-box flex-grow-1 bg-lavender'>
-      <app-search-filters [filters]='filters'></app-search-filters>
-    </div>
-  </div>
 
-  <div class='flex-container-column flex-grow-1 h-100 w-100 p-2 box-sizing-border-box'>
-    <div class='p-3 pl-4 box-sizing-border-box bg-lavenderblush'>
-      <h1 class='m-0'><b>Recommended Playlist</b></h1>
+    <div [style.display]='device.isMobile() && !tabVisibility.filter ? "none" : "flex"'
+         [style.margin-left]='device.isMobile() ? "0.8rem" : "0"'
+         class='discover-card'>
+      <div class='discover-card-header'>
+        <div class='discover-card-header-column'>
+          <ng-container *ngIf='!device.isMobile(); else filtersMobileTitle'>
+            <h4 class='m-0'><b>Search Filters</b></h4>
+          </ng-container>
+          <ng-template #filtersMobileTitle>
+            <h4 class='m-0'><b>Filters</b></h4>
+          </ng-template>
+        </div>
+        <div class='discover-card-header-column p-1'>
+          <button class='small-button' (click)='clearFilters()'>clear</button>
+        </div>
+        <div class='discover-card-header-column justify-content-end flex-grow-1'>
+          <button class="accent" (click)='getRecommendedTracks()'>Recommend</button>
+        </div>
+      </div>
+      <div class='discover-card-body'>
+        <app-search-filters-pretty *ngIf='prettyMode; else advancedMode'
+                                   [filters]='filters'
+                                   [filtersConfig]='filtersConfig'
+        ></app-search-filters-pretty>
+        <ng-template #advancedMode>
+          <app-search-filters [filters]='filters'></app-search-filters>
+        </ng-template>
+      </div>
     </div>
-    <div class='overflow-auto h-100 p-3 box-sizing-border-box flex-grow-1 bg-lavender'>
-      <button (click)='getRecommendedTracks()'>Recommend</button>
-      <button (click)='addTracksToPlaylist()'>Add</button>
-      <app-playlist [tracks]='recommendedTracks'></app-playlist>
+
+    <div [style.display]='device.isMobile() && !tabVisibility.playlist ? "none" : "flex"'
+         [style.margin-left]='device.isMobile() ? "0.8rem" : "0"'
+         class='discover-card'>
+      <div class='discover-card-header'>
+        <div class='discover-card-header-column'>
+          <ng-container *ngIf='!device.isMobile(); else playlistMobileTitle'>
+            <h4 class='m-0'><b>Recommended Playlist</b></h4>
+          </ng-container>
+          <ng-template #playlistMobileTitle>
+            <h4 class='m-0'><b>Playlist</b></h4>
+          </ng-template>
+          </div>
+          <div class='discover-card-header-column justify-content-end flex-grow-1'>
+            <button class="accent" [disabled]='!recommendedTracks?.length' (click)='addTracksToPlaylist()'>
+              Add to playlist
+            </button>
+          </div>
+      </div>
+      <div class='discover-card-body'>
+        <app-playlist [tracks]='recommendedTracks'></app-playlist>
+      </div>
     </div>
-  </div>
+  </ng-container>
+  <ng-template #genresLoading>
+    <div class='discover-card h-50 grow-0 justify-self-center' [style.width]='device.isMobile() ? "100%" : "50%"'>
+      <div class='discover-card-header justify-content-center'>
+        <div class='discover-card-header-column'>
+          <h4 class='m-0'><b>Please wait...</b></h4>
+        </div>
+      </div>
+      <div class='discover-card-body'>
+        <h6 class='center-me'>{{ds.loadingStatus}}</h6>
+      </div>
+    </div>
+  </ng-template>
+</div>
+
+<div class="discover-footer" [style.display]='device.isMobile() ? "flex" : "none"'>
+ <button [ngClass]='{"pressed": tabVisibility["genre"]}' (click)='changeTab("genre")'>Genres</button>
+ <button [ngClass]='{"pressed": tabVisibility["filter"]}' (click)='changeTab("filter")'>Filters</button>
+ <button [ngClass]='{"pressed": tabVisibility["playlist"]}' (click)='changeTab("playlist")'>Playlist</button>
 </div>

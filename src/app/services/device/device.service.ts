@@ -10,7 +10,7 @@ export class DeviceService {
     this.isMobileResolution = window.innerWidth < 768;
   }
 
-  public getIsMobileResolution(): boolean {
+  public isMobile(): boolean {
     return this.isMobileResolution;
   }
 }

@@ -3,6 +3,8 @@ import { AuthService } from '../../services/auth/auth.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { UserObjectPublic } from '../../models/spotify-api';
+import { DiscoverService } from '../../services/discover/discover.service';
+import { DeviceService } from '../../services/device/device.service';
 
 @Component({
   selector: 'app-header',
@@ -14,7 +16,7 @@ export class HeaderComponent implements OnInit {
   destroySub: Subject<boolean>;
   isLoggedIn: boolean;
 
-  constructor(private as: AuthService) {
+  constructor(private as: AuthService, public ds: DiscoverService, public device: DeviceService) {
     this.destroySub = new Subject();
   }
 

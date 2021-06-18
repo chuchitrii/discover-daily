@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SpotifyApiService } from '../spotify-api/spotify-api.service';
-import { image } from '../../models/image';
+import { images } from '../../models/images';
 import {
   ArtistObjectFull,
   IGetUserTopArtist,
@@ -26,15 +26,16 @@ import {
   providedIn: 'root',
 })
 export class DiscoverService {
+  user: UserObjectPublic;
   defaultQ = { offset: 0, limit: 50 };
   allSavedTracks: SavedTrackObject[] = [];
   recommendationGenres: GenreForRecommendation[] = [];
-  recommendedTracks;
-
+  loadingStatus: string;
+  recommendationStatus: string;
   constructor(private api: SpotifyApiService) {}
 
   async getRecommendation(count?: number, selectedGenres?: GenreModel[], filter?) {
-    console.log(filter);
+    this.recommendationStatus = `Search started`;
     if (this.allSavedTracks.length === 0) {
       this.allSavedTracks = await this.getAllSavedTracks();
     }
@@ -49,7 +50,7 @@ export class DiscoverService {
     return this.createGenreList(artistsWithTracksAndGenres);
   }
 
-  async addTracksToPlaylist(recommendedTracks, user, clear: boolean, playlistId?: string) {
+  async addTracksToPlaylist(recommendedTracks, user, clear: boolean = true, playlistId?: string) {
     let playlist;
     const queryParams = { uris: [] };
     recommendedTracks.map((x, i) => {
@@ -66,14 +67,19 @@ export class DiscoverService {
     }
 
     if (clear) {
+      this.recommendationStatus = `Tracks have been added to your «Discover Daily» playlist`;
       return await this.api.replaceTracksInPlaylist(queryParams, playlistId).toPromise();
     } else {
+      this.recommendationStatus = `Tracks have been added to your «Discover Daily» playlist`;
       return await this.api.postTracksToPlaylist(queryParams, playlistId).toPromise();
     }
   }
 
-  async getUserProfile(): Promise<UserObjectPublic> {
-    return await this.api.getUserProfile().toPromise();
+  getUserProfile(): void {
+    this.api
+      .getUserProfile()
+      .toPromise()
+      .then((user) => (this.user = user));
   }
 
   async getUserPlaylists(
@@ -101,10 +107,8 @@ export class DiscoverService {
     return playlists;
   }
 
-  async findDiscoverPlaylist(user: UserObjectPublic): Promise<string> {
-    const userId = user.id;
-    const playlists = await this.getAllPlaylists(userId);
-
+  async findDiscoverPlaylist(): Promise<string> {
+    const playlists = await this.getAllPlaylists(this.user.id);
     return playlists[playlists.findIndex((p) => p.name === 'Discover Daily')].id;
   }
 
@@ -118,6 +122,7 @@ export class DiscoverService {
       savedTracks.push(...res.items);
       total = res.total;
       q.offset += q.limit;
+      this.loadingStatus = `Loading your saved tracks: ${q.offset} tracks out of ${total}...`;
     } while (savedTracks.length < total);
 
     return savedTracks;
@@ -131,7 +136,7 @@ export class DiscoverService {
   ): Promise<TrackObjectSimplified[]> {
     const q = { limit: 50, seed_tracks: [] };
     const length = 5;
-    const recommendedTracks: TrackObjectSimplified[] = [];
+    const recommendedTracks: SetOfObjects = new SetOfObjects();
     let notEnoughTracks: boolean;
 
     if (selectedGenres.length > 0) {
@@ -143,6 +148,7 @@ export class DiscoverService {
       await this.fillRecommendationsGenres({ ...q, ...filter }, ...this.recommendationGenres);
 
       const quantity = Math.floor(count / this.recommendationGenres.length);
+
       do {
         if (!this.recommendationGenres.length) notEnoughTracks = true;
         for (const genre of this.recommendationGenres) {
@@ -150,23 +156,25 @@ export class DiscoverService {
             await this.fillRecommendationsGenres({ ...q, ...filter }, genre);
           }
           if (genre.toDelete) continue;
-          recommendedTracks.push(...genre.tracksFromResponse.slice(0, quantity));
+          genre.tracksFromResponse.slice(0, quantity).forEach((track) => recommendedTracks.add(track));
           genre.tracksFromResponse.splice(0, quantity);
+          this.recommendationStatus = `Searching tracks for you. Found ${recommendedTracks.size} tracks out of 30...`;
         }
         this.clearRecommendationGenres();
-      } while (!notEnoughTracks && recommendedTracks.length < count);
+      } while (!notEnoughTracks && recommendedTracks.size < count);
     } else {
       q.limit = 5;
       do {
         q.seed_tracks = Array(length)
           .fill(null)
           .map(() => savedTracks[this.getRandomInt(savedTracks.length)].track.id);
-        const res = await this.api.getRecommendedTracks(q).toPromise();
+        const res = await this.api.getRecommendedTracks({ ...q, ...filter }).toPromise();
         const filtered = await this.filterTracks(res.tracks);
-        recommendedTracks.push(...filtered);
-      } while (recommendedTracks.length < count);
+        filtered.forEach((track) => recommendedTracks.add(track));
+      } while (recommendedTracks.size < count);
     }
-    return recommendedTracks;
+    this.recommendationStatus = 'Search completed';
+    return Array.from(recommendedTracks);
   }
 
   async fillRecommendationsGenres(q, ...genres: IGenreForRecommendation[]) {
@@ -200,7 +208,7 @@ export class DiscoverService {
   }
 
   async filterTracks(tracks: TrackObjectSimplified[]) {
-    if (!tracks.length) return tracks;
+    if (!tracks?.length) return [];
 
     const queryParams = { ids: tracks.map((t) => t.id) };
     const mask = await this.api.getFilterMask(queryParams).toPromise();
@@ -213,7 +221,7 @@ export class DiscoverService {
   }
 
   async uploadPlaylistCover(playlistId: string) {
-    return await this.api.uploadPlaylistCover(image, playlistId).toPromise();
+    return await this.api.uploadPlaylistCover(images[this.getRandomInt(images.length)], playlistId).toPromise();
   }
 
   createArtistsWithTracksArray(savedTracks: SavedTrackObject[]): IArtistWithTracks[] {
@@ -241,6 +249,7 @@ export class DiscoverService {
     let offset = 0;
     do {
       const res = await this.api.getArtistsInformation({ ids: ids.slice(offset, limit) }).toPromise();
+      this.loadingStatus = `Loading info about artists: ${limit} artists out of ${ids.length}...`;
       artistsFullObject.push(...res.artists);
       limit += 50;
       offset += 50;
@@ -250,6 +259,7 @@ export class DiscoverService {
   }
 
   async getArtistsWithTracksAndGenres(savedTracks): Promise<IArtistWithTracksAndGenres[]> {
+    this.loadingStatus = `Analyzing your saved tracks...`;
     const artistsWithTracks = this.createArtistsWithTracksArray(savedTracks);
     const artistsWithGenres = await this.getArtistObjectFull(artistsWithTracks.map((artist) => artist.id));
     const artistsWithTracksAndGenres: IArtistWithTracksAndGenres[] = [];
@@ -280,5 +290,19 @@ export class DiscoverService {
 
   async getTopArtists(queryParams?: IGetUserTopArtist) {
     return await this.api.getTopArtists(queryParams).toPromise();
+  }
+}
+
+class SetOfObjects extends Set {
+  add(obj: any): this {
+    for (const item of this) {
+      if (this.compareObjects(obj, item)) return this;
+    }
+    super.add.call(this, obj);
+    return this;
+  }
+
+  compareObjects(obj1: any, obj2: any): boolean {
+    return obj1.id === obj2.id;
   }
 }

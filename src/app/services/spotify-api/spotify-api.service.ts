@@ -80,7 +80,7 @@ export class SpotifyApiService {
       })
       .pipe(
         catchError((e) => {
-          console.warn(e);
+          console.warn('Error: ', e);
           return of([]);
         })
       );
@@ -112,7 +112,7 @@ export class SpotifyApiService {
 
   uploadPlaylistCover(body: string, playlistId: string): Observable<any> {
     return this.http.put(`${this.apiBase}v1/playlists/${playlistId}/images`, body, {
-      headers: this.h().append('Content-Type', 'image/jpeg'),
+      headers: this.h().append('Content-Type', 'images/jpeg'),
     });
   }
 
