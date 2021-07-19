@@ -1,14 +1,16 @@
-<div class='row'>
-  <div class='col-sm'></div>
-  <div class='col-sm-8 header-container'>
-    <div class='row'>
-    <div class='app-name col-8 col-sm-8'>
+  <div class='discover-header'>
+    <div [style.text-align]='isLoggedIn ? "left" : "center"'
+         [style.font-size]='device.isMobile() ? "1.5rem" : "3rem"'
+         [style.line-height]='device.isMobile() ? "1.5rem" : "3rem"'
+         class='discover-header-title'>
       discover daily
     </div>
-    <div class='user-info col-4 col-sm-4'>
-      <button *ngIf='isLoggedIn' class='btn btn-outline-light float-end mt-1' (click)="logout()">Logout</button>
-    </div>
+    <div *ngIf='isLoggedIn && ds.user' class='discover-header-user'>
+      <img [src]='ds.user?.images[0]?.url'
+           [style.width]='device.isMobile() ? "2rem" : "3rem"'
+           [style.height]='device.isMobile() ? "2rem" : "3rem"'
+           alt='user-pic' class='user-pic'>
+      <span [style.display]='device.isMobile() ? "none" : "flex"' class='user-name'>{{ds.user?.display_name}}</span>
+      <button (click)="logout()">Logout</button>
     </div>
   </div>
-  <div class='col-sm'></div>
-</div>

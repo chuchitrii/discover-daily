@@ -1,73 +1,94 @@
-<div class='row'>
-  <div class='col-sm'></div>
-  <div class='card text-white bg-dark mb-3 col-sm-8'>
-    <div class='card-body'>
+<div class='discover-main-body'>
 
-        <div class='row'>
-
-          <div class='col-4 col-sm-2'>
-           <button [disabled]='gettingRecommendations' class='btn btn-outline-light' (click)="getRecommendedTracks()">Recommend</button>
-          </div>
-
-          <div class='col-3 col-sm-7'>
-            <button [disabled]='!recommendationsFound' class='btn btn-outline-light' (click)="addTracksToPlaylist()">Add</button>
-          </div>
-
-          <div class='col-5 col-sm-3 checkbox-center'>
-            <div class='form-check'>
-            <input class="form-check-input" type="checkbox" [checked]='clear' (change)='clearChange()' value="" id="clearCheck" [disabled]='!playlistFound'>
-            <label class="form-check-label" for="clearCheck">
-              Clear playlist
-            </label>
-            </div>
-          </div>
+  <ng-container *ngIf='genresLoaded; else genresLoading'>
+    <div [style.display]='device.isMobile() && !tabVisibility.genre ? "none" : "flex" ' class='discover-card'>
+      <div class='discover-card-header'>
+        <div class='discover-card-header-column'>
+          <ng-container *ngIf='!device.isMobile(); else genresMobileTitle'>
+            <h4 class='m-0'><b>Genre Stats</b></h4>
+          </ng-container>
+          <ng-template #genresMobileTitle>
+            <h4 class='m-0'><b>Genres</b></h4>
+          </ng-template>
         </div>
-
-      <div class='row mt-2 text-muted'>
-        <div class='col'>Tracks will be added to playlist «Discover Daily». If there is none it will be created.</div>
+        <div class='discover-card-header-column p-1'>
+          <button class='small-button' (click)='clearGenres()'>clear</button>
+        </div>
       </div>
-
+      <div class='discover-card-body'>
+        <app-genres-stats [genreList]='genres'></app-genres-stats>
       </div>
-  </div>
+    </div>
 
-  <div class='col-sm'></div>
-</div>
-<div *ngIf='!recommendationsFound && gettingRecommendations'>
+    <div [style.display]='device.isMobile() && !tabVisibility.filter ? "none" : "flex"'
+         [style.margin-left]='device.isMobile() ? "0.8rem" : "0"'
+         class='discover-card'>
+      <div class='discover-card-header'>
+        <div class='discover-card-header-column'>
+          <ng-container *ngIf='!device.isMobile(); else filtersMobileTitle'>
+            <h4 class='m-0'><b>Search Filters</b></h4>
+          </ng-container>
+          <ng-template #filtersMobileTitle>
+            <h4 class='m-0'><b>Filters</b></h4>
+          </ng-template>
+        </div>
+        <div class='discover-card-header-column p-1'>
+          <button class='small-button' (click)='clearFilters()'>clear</button>
+        </div>
+        <div class='discover-card-header-column justify-content-end flex-grow-1'>
+          <button class="accent" (click)='getRecommendedTracks()'>Recommend</button>
+        </div>
+      </div>
+      <div class='discover-card-body'>
+        <app-search-filters-pretty *ngIf='prettyMode; else advancedMode'
+                                   [filters]='filters'
+                                   [filtersConfig]='filtersConfig'
+        ></app-search-filters-pretty>
+        <ng-template #advancedMode>
+          <app-search-filters [filters]='filters'></app-search-filters>
+        </ng-template>
+      </div>
+    </div>
 
-</div>
-<div class='row'>
-  <div class='col-sm'></div>
-
-  <div  *ngIf='recommendationsFound' class='card text-white bg-dark mb-3 col-sm-8'>
-    <div class='card-body'>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item bg-dark text-muted">
-          <div class='row'>
-            <div class='col'>Artist</div>
-            <div class='col'>Track</div>
+    <div [style.display]='device.isMobile() && !tabVisibility.playlist ? "none" : "flex"'
+         [style.margin-left]='device.isMobile() ? "0.8rem" : "0"'
+         class='discover-card'>
+      <div class='discover-card-header'>
+        <div class='discover-card-header-column'>
+          <ng-container *ngIf='!device.isMobile(); else playlistMobileTitle'>
+            <h4 class='m-0'><b>Recommended Playlist</b></h4>
+          </ng-container>
+          <ng-template #playlistMobileTitle>
+            <h4 class='m-0'><b>Playlist</b></h4>
+          </ng-template>
           </div>
-        </li>
-        <li *ngFor="let track of recommendedTracks" class="list-group-item bg-dark text-light">
-          <div class='row'>
-            <div class='col'>{{track.artists[0].name}}</div>
-            <div class='col'>{{track.name}}</div>
+          <div class='discover-card-header-column justify-content-end flex-grow-1'>
+            <button class="accent" [disabled]='!recommendedTracks?.length' (click)='addTracksToPlaylist()'>
+              Add to playlist
+            </button>
           </div>
-        </li>
-      </ul>
+      </div>
+      <div class='discover-card-body'>
+        <app-playlist [tracks]='recommendedTracks'></app-playlist>
+      </div>
     </div>
-  </div>
-
-  <div *ngIf='!recommendationsFound && gettingRecommendations' class='card text-white bg-dark mb-3 col-sm-8'>
-    <div class='card-body'>
-    Loading...
+  </ng-container>
+  <ng-template #genresLoading>
+    <div class='discover-card h-50 grow-0 justify-self-center' [style.width]='device.isMobile() ? "100%" : "50%"'>
+      <div class='discover-card-header justify-content-center'>
+        <div class='discover-card-header-column'>
+          <h4 class='m-0'><b>Please wait...</b></h4>
+        </div>
+      </div>
+      <div class='discover-card-body'>
+        <h6 class='center-me'>{{ds.loadingStatus}}</h6>
+      </div>
     </div>
-  </div>
+  </ng-template>
+</div>
 
-  <div *ngIf='tracksAdded' class='card text-white bg-dark mb-3 col-sm-8'>
-    <div class='card-body'>
-      Tracks have been added to playlist
-    </div>
-  </div>
-
-  <div class='col-sm'></div>
+<div class="discover-footer" [style.display]='device.isMobile() ? "flex" : "none"'>
+ <button [ngClass]='{"pressed": tabVisibility["genre"]}' (click)='changeTab("genre")'>Genres</button>
+ <button [ngClass]='{"pressed": tabVisibility["filter"]}' (click)='changeTab("filter")'>Filters</button>
+ <button [ngClass]='{"pressed": tabVisibility["playlist"]}' (click)='changeTab("playlist")'>Playlist</button>
 </div>

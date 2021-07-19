@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { SpotifyApiService } from '../spotify-api/spotify-api.service';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +13,8 @@ export class AuthService {
   authQueryParams = {
     client_id: '6f1db9ac4bfa4cbc8c11d365774cd6d3',
     response_type: 'token',
-    redirect_uri: 'https://chuchitrii.github.io/discover-daily/callback',
-    scope: 'user-read-private user-read-email user-library-modify user-library-read playlist-modify-public playlist-modify-private ugc-image-upload',
+    redirect_uri: environment.callbackUrl,
+    scope: 'user-read-private user-library-modify user-library-read playlist-modify-public ugc-image-upload',
     state: null,
   };
 
@@ -42,22 +43,18 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     if (localStorage.getItem('access_token')) {
-      console.log('s', 0);
       if (
         this.minTimeBeforeRefresh <
         Number(localStorage.getItem('accessed_at')) + Number(localStorage.getItem('expires_in') + '000') - Date.now()
       ) {
-        console.log('s', 1);
         this.isLoggedIn$.next(true);
         return true;
       } else {
-        console.log('s', 2);
         this.removeLocalStorageItems();
         this.isLoggedIn$.next(false);
         return false;
       }
     } else {
-      console.log('s', 3);
       this.removeLocalStorageItems();
       this.isLoggedIn$.next(false);
       return false;

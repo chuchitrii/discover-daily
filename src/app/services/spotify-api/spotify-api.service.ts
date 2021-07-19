@@ -1,23 +1,33 @@
 import { Injectable } from '@angular/core';
-import { SpotifyAuthRequestQueryParams } from '../../models/spotify-query-params-model';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import {
+  ArtistObjectFull,
+  IAddTracksToPlaylist,
+  IAuthQueryParams,
+  ICreatePlaylist,
+  IGetUserTopArtist,
+  IQueryParams,
+  PagingObject,
+  PlaylistObjectFull,
+  PlaylistObjectSimplified,
+  PlaylistSnapshotResponse,
+  RecommendationsObject,
+  RecommendationsOptionsObject,
+  SavedTrackObject,
+  UserObjectPublic,
+  MultipleArtistsResponse,
+} from '../../models/spotify-api';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SpotifyApiService {
-  access_token: string = null;
   apiBase = 'https://api.spotify.com/';
-  headers: HttpHeaders;
-  defaultQ = { offset: 0, limit: 50 };
+  defaultQ: IQueryParams = { offset: 0, limit: 50 };
 
-  constructor(private http: HttpClient) {
-    this.access_token = localStorage.getItem('access_token');
-    this.headers = new HttpHeaders({
-      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-    });
-  }
+  constructor(private http: HttpClient) {}
 
   h(): HttpHeaders {
     return new HttpHeaders({
@@ -25,81 +35,96 @@ export class SpotifyApiService {
     });
   }
 
-  q(input: any): HttpParams {
-    return new HttpParams({ fromObject: input });
+  q(object: any): HttpParams | string {
+    const fromObject = {};
+    if (!object) {
+      return '';
+    }
+    Object.keys(object).forEach((key) => {
+      if (object[key] !== null && object[key] !== undefined) {
+        fromObject[key] = object[key];
+      }
+      if (Array.isArray(object[key])) {
+        fromObject[key] = object[key].join();
+      }
+    });
+    return new HttpParams({ fromObject });
   }
 
-  authRequest(queryParams: { client_id: string; response_type: string; redirect_uri: string; scope: string; state: string }): void {
-    const url = 'https://accounts.spotify.com/authorize?' + this.q(queryParams).toString();
-    window.location.href = url;
+  authRequest(queryParams: IAuthQueryParams): void {
+    window.location.href = `https://accounts.spotify.com/authorize?${this.q(queryParams)}`;
   }
 
-  getUserProfile(): Observable<any> {
-    return this.http.get(this.apiBase + 'v1/me', {
+  getUserProfile(): Observable<UserObjectPublic> {
+    return this.http.get<UserObjectPublic>(this.apiBase + 'v1/me', {
       headers: this.h(),
     });
   }
 
-  getPlaylists(userId: string, queryParams: { offset: number; limit: number } = this.defaultQ): Observable<any> {
-    return this.http.get(`${this.apiBase}v1/users/${userId}/playlists?${this.q(queryParams)}`, {
+  getPlaylists(userId: string, queryParams: IQueryParams = this.defaultQ): Observable<PagingObject<PlaylistObjectSimplified>> {
+    return this.http.get<PagingObject<PlaylistObjectSimplified>>(`${this.apiBase}v1/users/${userId}/playlists?${this.q(queryParams)}`, {
       headers: this.h(),
     });
   }
 
-  getSavedTracks(queryParams: { offset: number; limit: number } = this.defaultQ): Observable<any> {
-    return this.http.get(`${this.apiBase}v1/me/tracks?${this.q(queryParams)}`, {
+  getSavedTracks(queryParams: IQueryParams = this.defaultQ): Observable<PagingObject<SavedTrackObject>> {
+    return this.http.get<PagingObject<SavedTrackObject>>(`${this.apiBase}v1/me/tracks?${this.q(queryParams)}`, {
       headers: this.h(),
     });
   }
 
-  getRecommendedTracks(queryParams: { limit: number; seed_tracks: string[] }): Observable<any> {
-    return this.http.get(`${this.apiBase}v1/recommendations?limit=${queryParams.limit}&seed_tracks=${queryParams.seed_tracks.join(',')}`, {
+  getRecommendedTracks(queryParams: RecommendationsOptionsObject): Observable<RecommendationsObject> | Observable<any> {
+    return this.http
+      .get<RecommendationsObject>(`${this.apiBase}v1/recommendations?${this.q(queryParams)}`, {
+        headers: this.h(),
+      })
+      .pipe(
+        catchError((e) => {
+          console.warn('Error: ', e);
+          return of([]);
+        })
+      );
+  }
+
+  getFilterMask(queryParams: { ids: string[] }): Observable<Array<boolean>> {
+    return this.http.get<Array<boolean>>(`${this.apiBase}v1/me/tracks/contains?${this.q(queryParams)}`, {
       headers: this.h(),
     });
   }
 
-  getFilterMask(queryParams: { ids: string[] }): Observable<any> {
-    return this.http.get(`${this.apiBase}v1/me/tracks/contains?ids=${queryParams.ids.join(',')}`, {
-      headers: this.h(),
+  createPlaylist(body: ICreatePlaylist, user: UserObjectPublic): Observable<PlaylistObjectFull> {
+    return this.http.post<PlaylistObjectFull>(`${this.apiBase}v1/users/${user.id}/playlists`, JSON.stringify(body), {
+      headers: this.h().append('Content-Type', 'application/json'),
     });
   }
 
-  createPlaylist(
-    body: {
-      name: string;
-      public?: boolean;
-      collaborative?: boolean;
-      description: string;
-    },
-    user
-  ): Observable<any> {
-    const userId = user.id;
-    const headers = this.h().append('Content-Type', 'application/json');
-    console.log(headers);
-
-    return this.http.post(`${this.apiBase}v1/users/${userId}/playlists`, JSON.stringify(body), {
-      headers,
-    });
-  }
-
-  postTracksToPlaylist(body: { uris: string[] }, playlistId: string): Observable<any> {
-    const headers = this.h().append('Content-Type', 'application/json');
-    return this.http.post(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, body, {
-      headers,
+  postTracksToPlaylist(body: IAddTracksToPlaylist, playlistId: string): Observable<PlaylistSnapshotResponse> {
+    return this.http.post<PlaylistSnapshotResponse>(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, body, {
+      headers: this.h().append('Content-Type', 'application/json'),
     });
   }
 
   replaceTracksInPlaylist(body: { uris: string[] }, playlistId: string): Observable<any> {
-    const headers = this.h().append('Content-Type', 'application/json');
     return this.http.put(`${this.apiBase}v1/playlists/${playlistId}/tracks?`, body, {
-      headers,
+      headers: this.h().append('Content-Type', 'application/json'),
     });
   }
 
-  uploadPlaylistCover(body: string, playlistId: string) {
-    const headers = this.h().append('Content-Type', 'image/jpeg');
+  uploadPlaylistCover(body: string, playlistId: string): Observable<any> {
     return this.http.put(`${this.apiBase}v1/playlists/${playlistId}/images`, body, {
-      headers,
+      headers: this.h().append('Content-Type', 'images/jpeg'),
+    });
+  }
+
+  getTopArtists(queryParams?: IGetUserTopArtist): Observable<PagingObject<ArtistObjectFull>> {
+    return this.http.get<PagingObject<ArtistObjectFull>>(`${this.apiBase}v1/me/top/artists?${this.q(queryParams)}`, {
+      headers: this.h(),
+    });
+  }
+
+  getArtistsInformation(queryParams: { ids: string[] }): Observable<MultipleArtistsResponse> {
+    return this.http.get<MultipleArtistsResponse>(`${this.apiBase}v1/artists?${this.q(queryParams)}`, {
+      headers: this.h(),
     });
   }
 }

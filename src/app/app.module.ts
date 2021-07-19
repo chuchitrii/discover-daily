@@ -1,3 +1,6 @@
+import { PlaylistComponent } from './components/playlist/playlist.component';
+import { SearchFiltersComponent } from './components/search-filters/search-filters.component';
+import { GenresStatsComponent } from './components/genres-stats/genres-stats.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
@@ -8,10 +11,35 @@ import { CallbackComponent } from './components/callback/callback.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSliderModule } from '@angular/material/slider';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SearchFiltersPrettyComponent } from './components/search-filters-pretty/search-filters-pretty.component';
 
 @NgModule({
-  imports: [CommonModule, BrowserModule, AppRoutingModule, HttpClientModule],
-  declarations: [AppComponent, LoginComponent, DiscoverComponent, CallbackComponent, HeaderComponent],
+  imports: [
+    CommonModule,
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    MatSliderModule,
+    ReactiveFormsModule,
+    FormsModule,
+  ],
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    DiscoverComponent,
+    CallbackComponent,
+    HeaderComponent,
+    FooterComponent,
+    GenresStatsComponent,
+    SearchFiltersComponent,
+    PlaylistComponent,
+    SearchFiltersPrettyComponent,
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })

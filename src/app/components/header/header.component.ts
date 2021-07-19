@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
 import { takeUntil } from 'rxjs/operators';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
+import { UserObjectPublic } from '../../models/spotify-api';
+import { DiscoverService } from '../../services/discover/discover.service';
+import { DeviceService } from '../../services/device/device.service';
 
 @Component({
   selector: 'app-header',
@@ -9,11 +12,11 @@ import { BehaviorSubject, Subject } from 'rxjs';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  user: any;
+  user: UserObjectPublic;
   destroySub: Subject<boolean>;
   isLoggedIn: boolean;
 
-  constructor(private as: AuthService) {
+  constructor(private as: AuthService, public ds: DiscoverService, public device: DeviceService) {
     this.destroySub = new Subject();
   }
 

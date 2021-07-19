@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /**
  * Object for search parameters for searching for tracks, playlists, artists or albums.
  * See: [Search for an item](https://developer.spotify.com/web-api/search-item/)
@@ -64,9 +65,9 @@ export interface RecommendationsOptionsObject {
   min_tempo?: number;
   min_time_signature?: number;
   min_valence?: number;
-  seed_artists?: string[] | string; // Array of strings or Comma separated string
-  seed_genres?: string[] | string; // Array of strings or Comma separated string
-  seed_tracks?: string[] | string; // Array of strings or Comma separated string
+  seed_artists?: string[];
+  seed_genres?: string[];
+  seed_tracks?: string[]; // Array of strings or Comma separated string
   target_acousticness?: number;
   target_danceability?: number;
   target_duration_ms?: number;
@@ -130,6 +131,7 @@ export interface PlayParameterObject {
 /**
  * Void Response
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface VoidResponse {}
 
 /**
@@ -1218,5 +1220,165 @@ export interface ResumePointObject {
   resume_position_ms: number;
 }
 
+export interface IAuthQueryParams {
+  client_id: string;
+  response_type: string;
+  redirect_uri: string;
+  scope: string;
+  state: string;
+  show_dialog?: boolean;
+}
+
+export interface IQueryParams {
+  limit: number;
+  offset: number;
+}
+
+export interface ICreatePlaylist {
+  name: string;
+  public?: boolean;
+  collaborative?: boolean;
+  description?: string;
+}
+
+export interface IAddTracksToPlaylist {
+  position?: number;
+  uris: string[];
+}
+export interface IGetUserTopArtist {
+  time_range?: 'short_term' | 'medium_term' | 'long_term';
+  limit?: number;
+  offset?: number;
+}
+
 type ContextObjectType = 'artist' | 'playlist' | 'album';
 type PlaybackRepeatState = 'off' | 'track' | 'context';
+
+export const genre_seed = [
+  'acoustic',
+  'afrobeat',
+  'alt-rock',
+  'alternative',
+  'ambient',
+  'anime',
+  'black-metal',
+  'bluegrass',
+  'blues',
+  'bossanova',
+  'brazil',
+  'breakbeat',
+  'british',
+  'cantopop',
+  'chicago-house',
+  'children',
+  'chill',
+  'classical',
+  'club',
+  'comedy',
+  'country',
+  'dance',
+  'dancehall',
+  'death-metal',
+  'deep-house',
+  'detroit-techno',
+  'disco',
+  'disney',
+  'drum-and-bass',
+  'dub',
+  'dubstep',
+  'edm',
+  'electro',
+  'electronic',
+  'emo',
+  'folk',
+  'forro',
+  'french',
+  'funk',
+  'garage',
+  'german',
+  'gospel',
+  'goth',
+  'grindcore',
+  'groove',
+  'grunge',
+  'guitar',
+  'happy',
+  'hard-rock',
+  'hardcore',
+  'hardstyle',
+  'heavy-metal',
+  'hip-hop',
+  'holidays',
+  'honky-tonk',
+  'house',
+  'idm',
+  'indian',
+  'indie',
+  'indie-pop',
+  'industrial',
+  'iranian',
+  'j-dance',
+  'j-idol',
+  'j-pop',
+  'j-rock',
+  'jazz',
+  'k-pop',
+  'kids',
+  'latin',
+  'latino',
+  'malay',
+  'mandopop',
+  'metal',
+  'metal-misc',
+  'metalcore',
+  'minimal-techno',
+  'movies',
+  'mpb',
+  'new-age',
+  'new-release',
+  'opera',
+  'pagode',
+  'party',
+  'philippines-opm',
+  'piano',
+  'pop',
+  'pop-film',
+  'post-dubstep',
+  'power-pop',
+  'progressive-house',
+  'psych-rock',
+  'punk',
+  'punk-rock',
+  'r-n-b',
+  'rainy-day',
+  'reggae',
+  'reggaeton',
+  'road-trip',
+  'rock',
+  'rock-n-roll',
+  'rockabilly',
+  'romance',
+  'sad',
+  'salsa',
+  'samba',
+  'sertanejo',
+  'show-tunes',
+  'singer-songwriter',
+  'ska',
+  'sleep',
+  'songwriter',
+  'soul',
+  'soundtracks',
+  'spanish',
+  'study',
+  'summer',
+  'swedish',
+  'synth-pop',
+  'tango',
+  'techno',
+  'trance',
+  'trip-hop',
+  'turkish',
+  'work-out',
+  'world-music',
+];
