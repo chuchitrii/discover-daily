@@ -6,7 +6,6 @@ import { ActivatedRoute } from '@angular/router';
 import { DeviceService } from '../../services/device/device.service';
 import { DiscoverTabs } from './discoverTabs';
 import { filtersConfig, FiltersConfig } from '../search-filters-pretty/filters-config.model';
-import { config } from 'rxjs';
 
 @Component({
   selector: 'app-discover',
@@ -18,16 +17,9 @@ export class DiscoverComponent implements OnInit {
   recommendedTracks: TrackObjectSimplified[] = [];
   genres: GenreModel[] = [];
   user: UserObjectPublic;
-  playlistId: string;
   filters: any = new RecommendationsOptions();
   prettyMode = true;
   genresLoaded: boolean;
-  clear = false;
-  recommendationsFound = false;
-  gettingRecommendations = false;
-  searchingPlaylistEnded = false;
-  playlistFound = false;
-  tracksAdded = false;
   filtersConfig: FiltersConfig[] = filtersConfig;
   tabVisibility: { [key in DiscoverTabs]: boolean } = {
     genre: false,
@@ -37,10 +29,10 @@ export class DiscoverComponent implements OnInit {
 
   constructor(public ds: DiscoverService, public device: DeviceService, private route: ActivatedRoute) {}
 
-  ngOnInit(): void {
-    console.log(this.device.isMobile());
+  async ngOnInit(): Promise<void> {
     this.genresLoaded = false;
     this.getGenres();
+    await this.findPlaylist();
   }
 
   getGenres(): void {
@@ -52,10 +44,6 @@ export class DiscoverComponent implements OnInit {
 
   getRecommendedTracks(): void {
     this.changeTab('playlist');
-    this.tracksAdded = false;
-    this.gettingRecommendations = true;
-    this.recommendationsFound = false;
-    this.findPlaylist();
     this.recommendedTracks = [];
     this.genres.filter((genre) => genre.isSelected);
     this.ds
@@ -67,30 +55,17 @@ export class DiscoverComponent implements OnInit {
       .then((r) => {
         console.log(r);
         this.recommendedTracks = [...r];
-        this.gettingRecommendations = false;
-        this.recommendationsFound = true;
       });
   }
 
   addTracksToPlaylist(): void {
-    this.ds.addTracksToPlaylist(this.recommendedTracks, this.user, this.clear, this.playlistId).then((res) => {
+    this.ds.addTracksToPlaylist(this.recommendedTracks, this.user).then((res) => {
       this.recommendedTracks = [];
-      this.recommendationsFound = false;
-      this.tracksAdded = true;
     });
   }
 
-  findPlaylist(): void {
-    this.searchingPlaylistEnded = false;
-    this.ds.findDiscoverPlaylist().then((pl) => {
-      if (pl) {
-        this.playlistId = pl;
-        this.playlistFound = true;
-      } else {
-        this.playlistFound = false;
-      }
-      this.searchingPlaylistEnded = true;
-    });
+  async findPlaylist(): Promise<void> {
+    await this.ds.findDiscoverPlaylist();
   }
 
   changeTab(tab: 'genre' | 'filter' | 'playlist') {
@@ -113,10 +88,6 @@ export class DiscoverComponent implements OnInit {
       if (c.toggle) c.toggle.no.pressed = false;
     });
     this.filtersConfig = [...this.filtersConfig];
-  }
-
-  clearChange(): void {
-    this.clear = !this.clear;
   }
 
   toggleSearchMode(): void {

@@ -19,7 +19,7 @@ export class SearchFiltersPrettyComponent implements OnInit, OnDestroy, OnChange
   constructor() {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.filtersConfig) {
+    if (!changes.filtersConfig.firstChange && changes.filtersConfig) {
       this.tempoFormControl.reset();
     }
   }

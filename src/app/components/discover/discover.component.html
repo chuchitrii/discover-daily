@@ -88,7 +88,7 @@
 </div>
 
 <div class="discover-footer" [style.display]='device.isMobile() ? "flex" : "none"'>
- <button [ngClass]='{"pressed": tabVisibility["genre"]}' (click)='changeTab("genre")'>Genres</button>
- <button [ngClass]='{"pressed": tabVisibility["filter"]}' (click)='changeTab("filter")'>Filters</button>
- <button [ngClass]='{"pressed": tabVisibility["playlist"]}' (click)='changeTab("playlist")'>Playlist</button>
+ <button [ngClass]='{"pressed": tabVisibility["genre"]}' (click)='changeTab("genre")'><b>Genres</b></button>
+ <button [ngClass]='{"pressed": tabVisibility["filter"]}' (click)='changeTab("filter")'><b>Filters</b></button>
+ <button [ngClass]='{"pressed": tabVisibility["playlist"]}' (click)='changeTab("playlist")'><b>Playlist</b></button>
 </div>

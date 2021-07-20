@@ -11,6 +11,8 @@ export interface IGenreModel {
   tracks: ITrackModel[];
   artists: IArtistModel[];
   isSelected: boolean;
+  displayArtists: string;
+  addArtist: (artist: IArtistWithTracksAndGenres) => void;
 }
 
 export interface IArtistModel {
@@ -38,12 +40,23 @@ export class GenreModel implements IGenreModel {
   name: string;
   tracks: ITrackModel[];
   artists: IArtistModel[];
+  displayArtists: string;
   isSelected: boolean;
+
   constructor(name: string, artist: IArtistWithTracksAndGenres, tracks: TrackObjectFull[]) {
     this.name = name;
     this.artists = [new ArtistModel(artist)];
+    this.displayArtists = artist.name;
     this.tracks = tracks.map((track) => new TrackModel(track));
     this.isSelected = false;
+  }
+
+  addArtist(artist) {
+    this.artists.push(new ArtistModel(artist));
+    this.displayArtists = this.artists
+      .map((a) => a.name)
+      .slice(0, 2)
+      .join(', ');
   }
 }
 
@@ -51,6 +64,7 @@ export class ArtistModel implements IArtistModel {
   name: string;
   id: string;
   uri: string;
+
   constructor(artist: ArtistObjectFull | IArtistWithTracksAndGenres | ArtistObjectSimplified) {
     this.name = artist.name;
     this.id = artist.id;
@@ -96,3 +110,19 @@ export class GenreForRecommendation implements IGenreForRecommendation {
 }
 
 export class RecommendationsOptions implements RecommendationsOptionsObject {}
+
+export class SetOfObjects extends Set {
+  add(obj: any): this {
+    for (const item of this) {
+      if (this.compareObjects(obj, item)) {
+        return this;
+      }
+    }
+    super.add.call(this, obj);
+    return this;
+  }
+
+  compareObjects(obj1: any, obj2: any): boolean {
+    return obj1.id === obj2.id;
+  }
+}

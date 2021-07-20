@@ -10,12 +10,9 @@ import { DiscoverService } from '../../discover/discover.service';
 export class DiscoverAuthGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router, private ds: DiscoverService) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> {
     if (this.auth.isLoggedIn()) {
-      this.ds.getUserProfile();
+      await this.ds.getUserProfile();
       return true;
     } else {
       return this.router.createUrlTree(['/login']);
