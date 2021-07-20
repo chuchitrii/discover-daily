@@ -138,10 +138,11 @@ export class DiscoverService {
     let notEnoughTracks: boolean;
 
     if (selectedGenres.length > 0) {
-      const recommendationGenres = selectedGenres.map((selectedGenre) => new GenreForRecommendation(selectedGenre));
+      let recommendationGenres = selectedGenres.map((selectedGenre) => new GenreForRecommendation(selectedGenre));
       await this.fillRecommendationsGenres({ ...queryParams, ...filter }, recommendationGenres);
       const quantity = Math.floor(count / recommendationGenres.length);
       do {
+        console.log(recommendationGenres);
         if (!recommendationGenres.length) {
           notEnoughTracks = true;
           continue;
@@ -156,7 +157,7 @@ export class DiscoverService {
           genre.tracksFromResponse.splice(0, quantity).forEach((track) => recommendedTracks.add(track));
           this.recommendationStatus = `Searching tracks for you. Found ${recommendedTracks.size} tracks out of 30...`;
         }
-        this.clearRecommendationGenres(recommendationGenres);
+        recommendationGenres = this.clearRecommendationGenres(recommendationGenres);
       } while (!notEnoughTracks && recommendedTracks.size < count);
     } else {
       queryParams.limit = 5;
@@ -176,18 +177,14 @@ export class DiscoverService {
   async fillRecommendationsGenres(q, genres: IGenreForRecommendation[]) {
     for (const genre of genres) {
       q.seed_tracks = [];
-      if (genre.tracksForRequest.length <= 5) {
+      if (genre.tracksForRequest.length <= 5 && genre.tracksForRequest.length > 0) {
         q.seed_tracks.push(...genre.tracksForRequest);
         genre.tracksForRequest = [];
-      } else {
+      } else if (genre.tracksForRequest.length > 5) {
         for (let i = 0; i < 5; i++) {
-          if (!genre.tracksForRequest.length) {
-            break;
-          }
           q.seed_tracks.push(genre.tracksForRequest.splice(this.getRandomInt(genre.tracksForRequest.length), 1));
         }
-      }
-      if (!q.seed_tracks?.length) {
+      } else {
         genre.toDelete = true;
         continue;
       }
@@ -197,8 +194,8 @@ export class DiscoverService {
     }
   }
 
-  clearRecommendationGenres(recommendationGenres) {
-    recommendationGenres = recommendationGenres.filter((genre) => !genre.toDelete);
+  clearRecommendationGenres(recommendationGenres): GenreForRecommendation[] {
+    return recommendationGenres.filter((genre) => !genre.toDelete);
   }
 
   async filterTracks(tracks: TrackObjectSimplified[]) {

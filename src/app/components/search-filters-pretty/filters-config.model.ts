@@ -88,10 +88,10 @@ export const filtersConfig: FiltersConfig[] = [
     key: 'valence',
     toggle: {
       yes: {
-        label: 'high',
+        label: 'fun',
       },
       no: {
-        label: 'low',
+        label: 'sad',
       },
     },
   },

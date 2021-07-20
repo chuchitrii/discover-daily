@@ -314,6 +314,12 @@ input[type=text]:focus {
   padding: 1rem;
   //margin-top: 1rem;
 
+  .list-item-column.dot {
+    height: .7rem;
+    width: .7rem;
+    margin-right: 1rem;
+  };
+
   .list-item-column {
     display: flex;
     align-items: center;
@@ -324,6 +330,12 @@ input[type=text]:focus {
       width: 8rem;
     }
   }
+}
+
+.list-item.header {
+  padding-top: 0;
+  color: $discover-card-border-color;
+  border-bottom: 0 solid $discover-card-border-color;
 }
 
 .list-item:first-of-type {
