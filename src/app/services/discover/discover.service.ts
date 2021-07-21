@@ -12,7 +12,6 @@ import {
   UserObjectPublic,
 } from '../../models/spotify-api';
 import {
-  ArtistModel,
   GenreModel,
   IArtistWithTracks,
   IArtistWithTracksAndGenres,
@@ -42,9 +41,8 @@ export class DiscoverService {
   }
 
   async getGenres(): Promise<GenreModel[]> {
-    if (this.allSavedTracks.length === 0) {
-      this.allSavedTracks = await this.getAllSavedTracks();
-    }
+    this.allSavedTracks = await this.getAllSavedTracks();
+    if (!this.allSavedTracks.length) return [];
     const artistsWithTracksAndGenres = await this.getArtistsWithTracksAndGenres(this.allSavedTracks);
     return this.createGenreList(artistsWithTracksAndGenres);
   }
@@ -142,7 +140,6 @@ export class DiscoverService {
       await this.fillRecommendationsGenres({ ...queryParams, ...filter }, recommendationGenres);
       const quantity = Math.floor(count / recommendationGenres.length);
       do {
-        console.log(recommendationGenres);
         if (!recommendationGenres.length) {
           notEnoughTracks = true;
           continue;
@@ -189,7 +186,7 @@ export class DiscoverService {
         continue;
       }
       const res = await this.api.getRecommendedTracks(q).toPromise();
-      const filtered = await this.filterTracks(res.tracks);
+      const filtered = res?.tracks?.length ? await this.filterTracks(res.tracks) : [];
       genre.tracksFromResponse.push(...filtered);
     }
   }
@@ -199,9 +196,6 @@ export class DiscoverService {
   }
 
   async filterTracks(tracks: TrackObjectSimplified[]) {
-    if (!tracks?.length) {
-      return [];
-    }
     const mask = await this.api.getFilterMask({ ids: tracks.map((t) => t.id) }).toPromise();
     return tracks.filter((x, i) => !mask[i]);
   }

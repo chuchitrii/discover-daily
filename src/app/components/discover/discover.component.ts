@@ -22,9 +22,9 @@ export class DiscoverComponent implements OnInit {
   genresLoaded: boolean;
   filtersConfig: FiltersConfig[] = filtersConfig;
   tabVisibility: { [key in DiscoverTabs]: boolean } = {
-    genre: false,
+    genre: true,
     filter: false,
-    playlist: true,
+    playlist: false,
   };
 
   constructor(public ds: DiscoverService, public device: DeviceService, private route: ActivatedRoute) {}

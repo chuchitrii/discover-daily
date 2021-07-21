@@ -11,6 +11,7 @@ import { DeviceService } from '../../services/device/device.service';
 })
 export class GenresStatsComponent implements OnInit {
   @Input() genreList: GenreModel[];
+  helpVisible = true;
 
   constructor(public ds: DiscoverService, public device: DeviceService) {}
 

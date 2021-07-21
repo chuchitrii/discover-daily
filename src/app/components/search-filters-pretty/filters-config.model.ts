@@ -56,7 +56,7 @@ export const filtersConfig: FiltersConfig[] = [
       yes: {
         label: 'yes',
         options: {
-          min_popularity: 70,
+          min_popularity: 60,
           target_popularity: 100,
           max_popularity: 100,
         },
@@ -96,7 +96,7 @@ export const filtersConfig: FiltersConfig[] = [
     },
   },
   {
-    label: 'tempo',
+    label: 'bpm (tempo)',
     key: 'tempo',
     input: true,
   },
@@ -104,7 +104,7 @@ export const filtersConfig: FiltersConfig[] = [
 
 export const optionsPreset = {
   yes: {
-    min: 0.7,
+    min: 0.6,
     target: 1,
     max: 1,
   },

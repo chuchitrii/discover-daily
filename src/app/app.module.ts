@@ -8,7 +8,7 @@ import { LoginComponent } from './components/login/login.component';
 import { AppRoutingModule } from './app-routing.module';
 import { DiscoverComponent } from './components/discover/discover.component';
 import { CallbackComponent } from './components/callback/callback.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -16,6 +16,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SearchFiltersPrettyComponent } from './components/search-filters-pretty/search-filters-pretty.component';
+import { DEFAULT_TIMEOUT, DiscoverInterceptor } from './services/interceptor/discover-interceptor.service';
 
 @NgModule({
   imports: [
@@ -40,7 +41,10 @@ import { SearchFiltersPrettyComponent } from './components/search-filters-pretty
     PlaylistComponent,
     SearchFiltersPrettyComponent,
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: DiscoverInterceptor, multi: true },
+    { provide: DEFAULT_TIMEOUT, useValue: 5000 },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

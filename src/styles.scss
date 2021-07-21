@@ -320,6 +320,9 @@ input[type=text]:focus {
     margin-right: 1rem;
   };
 
+  .list-item-column.close-help {
+    cursor: pointer;
+  }
   .list-item-column {
     display: flex;
     align-items: center;
@@ -330,6 +333,10 @@ input[type=text]:focus {
       width: 8rem;
     }
   }
+}
+
+.list-item.help {
+  background-color: $discover-card-border-color;
 }
 
 .list-item.header {

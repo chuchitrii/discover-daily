@@ -36,7 +36,7 @@
           <button class='small-button' (click)='clearFilters()'>clear</button>
         </div>
         <div class='discover-card-header-column justify-content-end flex-grow-1'>
-          <button class="accent" (click)='getRecommendedTracks()'>Recommend</button>
+          <button class="accent" [disabled]='!this.genres.length' (click)='getRecommendedTracks()'>Recommend</button>
         </div>
       </div>
       <div class='discover-card-body'>

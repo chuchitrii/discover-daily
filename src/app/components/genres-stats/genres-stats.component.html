@@ -1,3 +1,21 @@
+<ng-container *ngIf='!genreList.length'>
+  <div class='list-item'>
+    <p>
+    Ah-hah, you must be the new discoverer. Welcome to the Discover Daily...<br>
+    Just go out and like a few tracks. It's for your own good...<br>
+    <br>
+    <b>Sorry, can't recommend you nothing until I know what you like</b>
+    </p>
+  </div>
+</ng-container>
+<div *ngIf='helpVisible' class='list-item help'>
+  <div class='list-item-column'>
+    You can select genres for recommendations
+  </div>
+  <div (click)="helpVisible = !helpVisible" class='list-item-column close-help ml-1 mr-1'>
+    <b>x</b>
+  </div>
+</div>
 <ng-container *ngFor="let genre of genreList">
   <div *ngIf="genre.isSelected"
        (click)="unselectGenre(genre)"
