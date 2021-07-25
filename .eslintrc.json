@@ -41,8 +41,8 @@
         ],
         "@typescript-eslint/naming-convention": "off",
         "curly": [
-          "warn",
-          "multi"
+          "error",
+          "multi-line"
         ]
       }
     },

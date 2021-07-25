@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { UserObjectPrivate } from '../../models/spotify-api';
 
 @Component({
   selector: 'app-header',
@@ -8,7 +7,6 @@ import { UserObjectPrivate } from '../../models/spotify-api';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent implements OnInit {
-  @Input() user: UserObjectPrivate;
   @Input() isLoggedIn: boolean;
   @Output() logOut: EventEmitter<boolean> = new EventEmitter<boolean>();
 

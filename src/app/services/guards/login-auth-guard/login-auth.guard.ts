@@ -13,7 +13,7 @@ export class LoginAuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (this.auth.isLoggedIn()) return this.router.createUrlTree(['']);
+    if (this.auth.isLoggedIn()) return this.router.createUrlTree(['stats']);
     return true;
   }
 }

@@ -63,8 +63,8 @@ export class SpotifyApiService {
     });
   }
 
-  public createPlaylist(body: ICreatePlaylist, user: UserObjectPublic): Observable<PlaylistObjectFull> {
-    return this.http.post<PlaylistObjectFull>(`${this.apiBase}v1/users/${user.id}/playlists`, JSON.stringify(body), {
+  public createPlaylist(body: ICreatePlaylist, userId: string): Observable<PlaylistObjectFull> {
+    return this.http.post<PlaylistObjectFull>(`${this.apiBase}v1/users/${userId}/playlists`, JSON.stringify(body), {
       headers: this.h().append('Content-Type', 'application/json'),
     });
   }
@@ -117,7 +117,7 @@ export class SpotifyApiService {
       return '';
     }
     Object.keys(object).forEach((key) => {
-      if (object[key] !== null && object[key] !== undefined) {
+      if (object[key] !== null && object[key] !== undefined && object[key] !== '') {
         fromObject[key] = object[key];
       }
       if (Array.isArray(object[key])) {

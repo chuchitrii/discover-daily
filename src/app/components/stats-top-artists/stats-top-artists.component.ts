@@ -9,7 +9,6 @@ import { ITopArtists, topArtistsTerms, TopArtistsTerms } from '../../models/disc
 })
 export class StatsTopArtistsComponent implements OnInit {
   @ViewChild('artistsContainer') artistsContainer: ElementRef;
-
   @Input() topArtists: ITopArtists;
   topArtistsTerms = topArtistsTerms;
   currentTerm: TopArtistsTerms = 'long_term';

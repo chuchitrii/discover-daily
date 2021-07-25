@@ -1,7 +1,7 @@
 <div #genresCard class='card'>
   <div class='card__header'>
     <div class='card__header-title'>
-      genres stats
+      genres <span class='hidden md:inline'> stats </span>
     </div>
     <div class='card__header-search'>
       <input type='search' class='rounded-lg w-full' [formControl]='searchFormControl'>
@@ -21,9 +21,6 @@
           <div class='rounded-lg w-full flex space-x-4 p-4 bg-gradient-to-r from-blue-50 to-blue-100'>
             <div class='font-discover md:text-xl font-bold w-5/12 break-words line-clamp-2'>
               {{genre.name}}
-            </div>
-            <div class='md:hidden w-2/12'>
-              {{genre.tracksCount}} <span class='hidden md:inline'>songs</span>
             </div>
             <div class='w-5/12 md:w-8/12 line-clamp-2 leading-loose'>
               <span *ngFor='let artist of genre.artists'

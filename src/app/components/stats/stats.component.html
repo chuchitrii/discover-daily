@@ -1,8 +1,8 @@
-<div class='main-container'>
-  <div class='w-full md:w-2/3 h-4/5'>
+<article class='main-container'>
+  <section class='w-full md:w-2/3 h-4/5'>
     <app-stats-top-artists [topArtists]='s.topArtists$ | async'></app-stats-top-artists>
-  </div>
-  <div #genreContainer class='w-full md:w-2/3 md:min-h-screen'>
+  </section>
+  <section #genreContainer class='w-full md:w-2/3 md:min-h-screen'>
     <app-stats-genres (genreSearch)='onGenreSearch($event)' [genres]='s.genres$ | async'></app-stats-genres>
-  </div>
-</div>
+  </section>
+</article>

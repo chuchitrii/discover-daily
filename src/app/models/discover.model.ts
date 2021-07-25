@@ -105,9 +105,17 @@ export class GenreForRecommendation implements IGenreForRecommendation {
   constructor(genre: GenreModel) {
     this.genreName = genre.name;
     this.tracksForRequest = genre.tracks.map((track) => track.id);
+    this.shuffle(this.tracksForRequest);
     this.tracksFromResponse = [];
     this.toDelete = false;
   }
+
+  shuffle = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  };
 }
 
 export class RecommendationsOptions implements RecommendationsOptionsObject {}

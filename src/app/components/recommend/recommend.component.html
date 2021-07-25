@@ -1,55 +1,43 @@
 <div class='main-container'>
-  <div #genresCard class='card'>
-    <div class='card__header'>
-      <div class='card__header-title'>
+  <div class='card w-full md:w-2/3'>
+    <div class='card__header flex justify-between'>
+      <h1 class='card__header-title'>
         recommended playlist
+      </h1>
+      <div class='card__header-buttons'>
+        <button class="rounded-lg p-2 bg-white hover:bg-gray- font-discover font-bold"  [disabled]='r.addTracksProcessing$ | async' (click)='r.addTracksToPlaylistSubject.next()'> add tracks</button>
+        <button (click)='r.getRecommendationsSubject.next()'> recommend</button>
       </div>
     </div>
     <div class='card__body py-2'>
-      <ng-container *ngIf='r.recommendedSongs$ | async as recommendedSongs; else genresLoading'>
-        <ul class='list flex-col space-y-2'>
-          <li *ngIf='recommendedSongs?.length === 0'>
-            No genres found
+      <ng-container *ngIf='r.recommendedSongs$ | async as recommendedSongs; else songsLoading'>
+        <ul *ngIf='(r.recommendationsLoading$ | async) === false; else songsLoading' class='list flex-col space-y-2'>
+          <li class='w-full flex' *ngIf='recommendedSongs?.length === 0'>
+            <div class='rounded-lg w-full flex space-x-4 p-4 bg-gradient-to-r from-blue-50 to-blue-100'>
+              No genres found
+            </div>
           </li>
           <li *ngFor='let song of recommendedSongs' class='w-full flex'>
-            <div class='flex flex-col hidden md:flex justify-center items-center w-32 h-32 md:h-auto'>
-              <span class='font-discover text-blueGray-400 font-black text-2xl m-auto'>{{song?.tracks?.length}}</span>
-              <span class='font-discover text-blueGray-400 font-black text-lg m-auto'>tracks</span>
-            </div>
             <div class='rounded-lg w-full flex space-x-4 p-4 bg-gradient-to-r from-blue-50 to-blue-100'>
-              <div class='font-discover md:text-xl font-bold w-5/12 break-words line-clamp-2'>
+              <div class='w-5/12 line-clamp-2 leading-loose'>
+                <span *ngFor='let artist of song.artists' class='bg-gradient-to-t from-gray-300 to-gray-200 font-discover font-bold bg-gray-300 py-0.5 px-1 mr-2 rounded'>{{artist.name}}</span>
+              </div>
+              <div class='w-7/12 line-clamp-2 leading-loose break-words font-discover font-bold'>
                 {{song.name}}
-              </div>
-              <div class='md:hidden w-2/12'>
-                {{song.tracksCount}} <span class='hidden md:inline'>songs</span>
-              </div>
-              <div class='w-5/12 md:w-8/12 line-clamp-2 leading-loose'>
-              <span *ngFor='let artist of song.artists'
-                    class='bg-gradient-to-t from-yellow-200 to-yellow-100 font-medium rounded py-0.5 px-1 mr-2 '>
-                {{artist.name}}
-              </span>
               </div>
             </div>
           </li>
         </ul>
       </ng-container>
-      <ng-template #genresLoading>
+      <ng-template #songsLoading>
         <ul class='list flex-col space-y-2'>
           <li *ngFor='let i of [340,560,1120,130,123,100,77,80,9,10]' class='w-full flex animate-pulse'>
-            <div class='flex flex-col hidden md:flex justify-center items-center w-32 h-32 md:h-auto'>
-              <span class='font-discover text-blueGray-400 font-black text-2xl m-auto'>{{i}}</span>
-              <span class='font-discover text-blueGray-400 font-black text-lg m-auto'>tracks</span>
-            </div>
             <div class='rounded-lg w-full flex space-x-4 p-4 bg-gradient-to-r from-blue-50 to-blue-100'>
-              <div class='flex flex-wrap w-4/12 space-y-2'>
-                <div class='h-4 bg-gray-50 w-2/3'></div>
+              <div class='flex flex-wrap w-1/2 space-y-2'>
                 <div class='h-4 bg-gray-50 w-2/3'></div>
               </div>
-              <div class='w-4/12'>
+              <div class='w-1/2'>
                 <div class='h-4 bg-gray-50 w-1/3'></div>
-              </div>
-              <div class='w-4/12'>
-                <div class='h-4 bg-gray-50 w-full'></div>
               </div>
             </div>
           </li>

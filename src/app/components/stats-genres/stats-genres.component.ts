@@ -19,7 +19,7 @@ export class StatsGenresComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit(): void {
-    this.searchFormControl.valueChanges.pipe(takeUntil(this.destroySub), debounceTime(300)).subscribe((search) => {
+    this.searchFormControl.valueChanges.pipe(takeUntil(this.destroySub), debounceTime(300)).subscribe((search: string) => {
       this.genreSearch.emit(search);
     });
   }

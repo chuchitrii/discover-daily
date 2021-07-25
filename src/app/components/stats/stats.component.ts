@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { StatsService } from '../../services/stats/stats.service';
 
 @Component({
@@ -8,22 +8,15 @@ import { StatsService } from '../../services/stats/stats.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [StatsService],
 })
-export class StatsComponent implements OnInit, AfterViewInit {
+export class StatsComponent implements OnInit {
   @ViewChild('genreContainer', { static: true }) genreContainer: ElementRef;
-  genreContainerDomRect: DOMRectReadOnly;
 
-  constructor(public s: StatsService) {
-    s.init();
-  }
+  constructor(public s: StatsService) {}
 
   ngOnInit(): void {}
 
-  onGenreSearch($event) {
-    window.scroll({ top: this.genreContainerDomRect.top, left: 0, behavior: 'smooth' });
+  onGenreSearch($event: string) {
     this.s.genresFilter$.next($event);
-  }
-
-  ngAfterViewInit(): void {
-    this.genreContainerDomRect = this.genreContainer.nativeElement.getBoundingClientRect();
+    window.scroll({ top: this.genreContainer.nativeElement.getBoundingClientRect().top + window.scrollY, left: 0, behavior: 'smooth' });
   }
 }

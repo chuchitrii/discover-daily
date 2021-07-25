@@ -3,6 +3,8 @@ import { BehaviorSubject } from 'rxjs';
 import { SpotifyApiService } from '../spotify-api/spotify-api.service';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { DiscoverService } from '../discover/discover.service';
+import { UserService } from '../user/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +20,7 @@ export class AuthService {
     state: null,
   };
 
-  constructor(private api: SpotifyApiService, private router: Router) {}
+  constructor(private api: SpotifyApiService, private router: Router, private d: DiscoverService, private user: UserService) {}
 
   generateRandomString(length): string {
     let text = '';
@@ -48,20 +50,24 @@ export class AuthService {
         this.isLoggedIn$.next(true);
         return true;
       } else {
-        this.removeLocalStorageItems();
-        this.isLoggedIn$.next(false);
+        this.clear();
         return false;
       }
     } else {
-      this.removeLocalStorageItems();
-      this.isLoggedIn$.next(false);
+      this.clear();
       return false;
     }
   }
 
   logout() {
-    this.removeLocalStorageItems();
-    this.isLoggedIn$.next(false);
+    this.clear();
     this.router.navigate(['/login']).then();
+  }
+
+  clear() {
+    this.removeLocalStorageItems();
+    this.d.clear();
+    this.user.clear();
+    this.isLoggedIn$.next(false);
   }
 }

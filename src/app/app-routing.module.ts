@@ -20,7 +20,7 @@ const routes: Routes = [
     canActivate: [CallbackAuthGuard],
   },
   {
-    path: '',
+    path: 'stats',
     component: StatsComponent,
     canActivate: [DiscoverAuthGuard],
   },
@@ -28,6 +28,11 @@ const routes: Routes = [
     path: 'recommend',
     component: RecommendComponent,
     canActivate: [DiscoverAuthGuard],
+  },
+  {
+    path: '',
+    redirectTo: 'stats',
+    pathMatch: 'full',
   },
 ];
 

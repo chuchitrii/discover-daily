@@ -1,7 +1,7 @@
 <div class='card h-full'>
-  <div class='card__header flex-col md:flex-row'>
+  <div class='card__header'>
     <div class='card__header-title'>
-      top artists
+      <span class='hidden md:inline'>top </span>artists
     </div>
     <div class='flex justify-end items-end space-x-2 px-4'>
       <button [disabled]='!topArtists' (click)='changeTerm(term)' *ngFor='let term of topArtistsTerms'
@@ -15,26 +15,33 @@
   <div #artistsContainer id='artists-list' class='card__body py-2 d:pb-4 md:pt-0 md:pl-0 overflow-y-auto'>
     <ul class='list md:flex-col space-x-2 md:space-y-2 md:space-x-0'>
       <ng-container *ngIf='topArtists; else loadingArtists'>
-        <li *ngFor='let artist of topArtists[currentTerm]; let i = index'
-            class='flex w-32 md:w-full md:h-32'>
-          <div class='flex hidden md:flex justify-center items-center w-32 h-32 md:h-auto'>
-            <span class='font-discover text-blueGray-400 font-black text-6xl m-auto'>{{i + 1}}</span>
-          </div>
-          <div class='flex flex-col md:flex-row w-32 md:w-full md:h-32 rounded-lg md:mt-2 bg-gradient-to-r from-blue-50 to-blue-100'>
-            <div class='w-32 h-32 overflow-hidden rounded-t-lg md:rounded-t-none md:rounded-l-lg'>
-              <img alt='artist-picture' class='object-cover object-center w-full h-full rounded-t-lg md:rounded-t-none md:rounded-l-lg' [src]='artist.images[0] ? artist.images[0].url : "" '>
+        <ng-container *ngIf='topArtists[currentTerm].length; else noTopArtists'>
+          <li *ngFor='let artist of topArtists[currentTerm]; let i = index'
+              class='flex w-32 md:w-full md:h-32'>
+            <div class='flex hidden md:flex justify-center items-center w-32 h-32 md:h-auto'>
+              <span class='font-discover text-blueGray-400 font-black text-6xl m-auto'>{{i + 1}}</span>
             </div>
-            <div class='flex w-full flex-col p-2 pl-4 space-y-2'>
-              <div class='font-discover md:text-2xl font-bold break-words line-clamp-2'>{{artist.name}}</div>
-              <div class='hidden md:block md:line-clamp-2 leading-loose'>
+            <div class='flex flex-col md:flex-row w-32 md:w-full md:h-32 rounded-lg md:mt-2 bg-gradient-to-r from-blue-50 to-blue-100'>
+              <div class='w-32 h-32 overflow-hidden rounded-t-lg md:rounded-t-none md:rounded-l-lg'>
+                <img alt='artist-picture' class='object-cover object-center w-full h-full rounded-t-lg md:rounded-t-none md:rounded-l-lg' [src]='artist.images[1]?.url || artist.images[0]?.url || ""'>
+              </div>
+              <div class='flex w-full flex-col p-2 pl-4 space-y-2'>
+                <div class='font-discover md:text-2xl font-bold break-words line-clamp-2'>{{artist.name}}</div>
+                <div class='hidden md:block md:line-clamp-2 leading-loose'>
                   <span *ngFor='let genre of artist.genres'
                         class='bg-gradient-to-t from-yellow-200 to-yellow-100 font-medium rounded py-0.5 px-1 mr-2'>
                     {{genre}}
                   </span>
+                </div>
               </div>
             </div>
-          </div>
-        </li>
+          </li>
+        </ng-container>
+        <ng-template #noTopArtists>
+          <li class='w-full rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 font-discover md:text-2xl font-bold p-4 ml-2 mt-2'>
+            No artists for this term
+          </li>
+        </ng-template>
       </ng-container>
       <ng-template #loadingArtists>
         <li *ngFor='let artist of [1,2,3,4,5,6,7,8,9,10]; let i = index'
