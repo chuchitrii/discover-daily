@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class AuthService {
-  isLoggedIn$: BehaviorSubject<boolean>;
+  isLoggedIn$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   minTimeBeforeRefresh = 150000;
   authQueryParams = {
     client_id: '6f1db9ac4bfa4cbc8c11d365774cd6d3',
@@ -18,9 +18,7 @@ export class AuthService {
     state: null,
   };
 
-  constructor(private api: SpotifyApiService, private router: Router) {
-    this.isLoggedIn$ = new BehaviorSubject<boolean>(false);
-  }
+  constructor(private api: SpotifyApiService, private router: Router) {}
 
   generateRandomString(length): string {
     let text = '';
@@ -37,7 +35,7 @@ export class AuthService {
     this.api.authRequest(this.authQueryParams);
   }
 
-  removeLocalStorageItems() {
+  removeLocalStorageItems(): void {
     ['access_token', 'expires_in', 'accessed_at', 'state'].forEach((value) => localStorage.removeItem(value));
   }
 
@@ -63,6 +61,7 @@ export class AuthService {
 
   logout() {
     this.removeLocalStorageItems();
-    this.router.navigate(['/login']);
+    this.isLoggedIn$.next(false);
+    this.router.navigate(['/login']).then();
   }
 }

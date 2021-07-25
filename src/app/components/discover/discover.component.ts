@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { DiscoverService } from '../../services/discover/discover.service';
 import { TrackObjectSimplified, UserObjectPublic } from '../../models/spotify-api';
 import { GenreModel, RecommendationsOptions } from '../../models/discover.model';
 import { ActivatedRoute } from '@angular/router';
-import { DeviceService } from '../../services/device/device.service';
 import { DiscoverTabs } from './discoverTabs';
 import { filtersConfig, FiltersConfig } from '../search-filters-pretty/filters-config.model';
 
@@ -13,7 +12,10 @@ import { filtersConfig, FiltersConfig } from '../search-filters-pretty/filters-c
   styleUrls: ['./discover.component.scss'],
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DiscoverComponent implements OnInit {
+export class DiscoverComponent {
+  topArtistsTerm = 'long_term';
+
+  topArtistsPaginationFrom = 0;
   recommendedTracks: TrackObjectSimplified[] = [];
   genres: GenreModel[] = [];
   user: UserObjectPublic;
@@ -27,56 +29,58 @@ export class DiscoverComponent implements OnInit {
     playlist: false,
   };
 
-  constructor(public ds: DiscoverService, public device: DeviceService, private route: ActivatedRoute) {}
+  constructor(public ds: DiscoverService, private route: ActivatedRoute) {}
 
-  async ngOnInit(): Promise<void> {
-    this.genresLoaded = false;
-    this.getGenres();
-    await this.findPlaylist();
-  }
-
-  getGenres(): void {
-    this.ds.getGenres().then((genres) => {
-      this.genres = [...genres];
-      this.genresLoaded = true;
-    });
-  }
-
-  getRecommendedTracks(): void {
-    this.changeTab('playlist');
-    this.recommendedTracks = [];
-    this.genres.filter((genre) => genre.isSelected);
-    this.ds
-      .getRecommendation(
-        30,
-        this.genres.filter((genre) => genre.isSelected),
-        this.filters
-      )
-      .then((r) => {
-        console.log(r);
-        this.recommendedTracks = [...r];
-      });
-  }
-
-  addTracksToPlaylist(): void {
-    this.ds.addTracksToPlaylist(this.recommendedTracks, this.user).then((res) => {
-      this.recommendedTracks = [];
-    });
-  }
-
-  async findPlaylist(): Promise<void> {
-    await this.ds.findDiscoverPlaylist();
-  }
+  // async ngOnInit(): Promise<void> {
+  //   this.genresLoaded = false;
+  //   this.getGenres();
+  //   await this.findPlaylist();
+  //   await this.ds.getTopArtistsForAllTerms();
+  //   // console.log(this.ds.topArtists);
+  // }
+  //
+  // getGenres(): void {
+  //   // this.ds.getGenreStats().then((genres) => {
+  //   //   this.genres = [...genres];
+  //   //   this.genresLoaded = true;
+  //   // });
+  // }
+  //
+  // getRecommendedTracks(): void {
+  //   this.changeTab('playlist');
+  //   this.recommendedTracks = [];
+  //   this.genres.filter((genre) => genre.isSelected);
+  //   this.ds
+  //     .getRecommendation(
+  //       30,
+  //       this.genres.filter((genre) => genre.isSelected),
+  //       this.filters
+  //     )
+  //     .then((r) => {
+  //       console.log(r);
+  //       this.recommendedTracks = [...r];
+  //     });
+  // }
+  //
+  // addTracksToPlaylist(): void {
+  //   this.ds.addTracksToPlaylist(this.recommendedTracks, this.user).then((res) => {
+  //     this.recommendedTracks = [];
+  //   });
+  // }
+  //
+  // async findPlaylist(): Promise<void> {
+  //   await this.ds.findDiscoverPlaylist();
+  // }
 
   changeTab(tab: 'genre' | 'filter' | 'playlist') {
     Object.keys(this.tabVisibility).forEach((tabName) => (this.tabVisibility[tabName] = tab === tabName));
   }
 
   clearGenres() {
-    this.genres.forEach((genre) => {
-      genre.isSelected = false;
-    });
-    this.genres = [...this.genres];
+    // this.genres.forEach((genre) => {
+    //   genre.isSelected = false;
+    // });
+    // this.genres = [...this.genres];
   }
 
   clearFilters() {
@@ -88,6 +92,12 @@ export class DiscoverComponent implements OnInit {
       if (c.toggle) c.toggle.no.pressed = false;
     });
     this.filtersConfig = [...this.filtersConfig];
+  }
+
+  resetScroll() {
+    console.log(document.getElementById);
+    document.getElementById('artists-list').scrollLeft = 0;
+    document.getElementById('artists-list').scrollTop = 0;
   }
 
   toggleSearchMode(): void {

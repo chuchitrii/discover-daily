@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 8888",
-    "build": "set NODE_ENV=production&& ng build --configuration production",
+    "build": "ng build --configuration production",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -20,7 +20,9 @@
     "@angular/platform-browser": "~12.1.3",
     "@angular/platform-browser-dynamic": "~12.1.3",
     "@angular/router": "~12.1.3",
+    "@tailwindcss/aspect-ratio": "^0.2.1",
     "@tailwindcss/forms": "^0.3.3",
+    "@tailwindcss/line-clamp": "^0.2.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"

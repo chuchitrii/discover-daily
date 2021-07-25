@@ -1,18 +1,28 @@
-  <div class='discover-header'>
-    <div [style.text-align]='isLoggedIn ? "left" : "center"'
-         [style.font-size]='device.isMobile() ? isLoggedIn ? "1.5rem" : "2rem" : "3rem"'
-         [style.line-height]='device.isMobile() ? isLoggedIn ? "1.5rem" : "2rem" : "3rem"'
-         class='discover-header-title'>
-      discover daily
+  <div class='w-full flex justify-around box-border bg-white'>
+    <div class='flex items-center space-x-8'>
+      <div class='font-discover font-black text-gradient bg-gradient-to-r from-teal-200 via-purple-200 to-rose-200 text-4xl sm:text-4xl md:text-5xl p-4'>
+        discover daily
+      </div>
+      <div class='flex items-center text-2xl sm:text-3xl md:text-4xl p-4 space-x-4'>
+        <a class='font-discover underline cursor-pointer' [routerLink]="['/']">
+          stats
+        </a>
+        <a class='font-discover underline cursor-pointer' [routerLink]="['/recommend']">
+          recommend
+        </a>
     </div>
-    <div *ngIf='isLoggedIn' class='discover-header-user'>
-      <ng-container *ngIf='ds.user'>
-        <img [src]='ds.user?.images[0]?.url'
-             [style.width]='device.isMobile() ? "2rem" : "3rem"'
-             [style.height]='device.isMobile() ? "2rem" : "3rem"'
-             alt='user-pic' class='user-pic'>
-        <span [style.display]='device.isMobile() ? "none" : "flex"' class='user-name'>{{ds.user?.display_name}}</span>
-      </ng-container>
-      <button (click)="logout()">Logout</button>
+    </div>
+
+    <div *ngIf='isLoggedIn' class='flex space-x-4 items-center'>
+      <div *ngIf='user'>
+        <button class='p-2 flex rounded-full items-center bg-white shadow' (click)="logOut.emit(true)">
+          <span>
+            <img [src]='user.images[0]?.url' class="rounded-full h-6 w-6"  alt='user-pic'>
+          </span>
+          <span class='font-bold ml-2'>
+            Logout
+          </span>
+        </button>
+      </div>
     </div>
   </div>

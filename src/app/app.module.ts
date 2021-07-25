@@ -16,6 +16,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SearchFiltersPrettyComponent } from './components/search-filters-pretty/search-filters-pretty.component';
 import { DEFAULT_TIMEOUT, DiscoverInterceptor } from './services/interceptor/discover-interceptor.service';
+import { StatsComponent } from './components/stats/stats.component';
+import { RecommendComponent } from './components/recommend/recommend.component';
+import { StatsTopArtistsComponent } from './components/stats-top-artists/stats-top-artists.component';
+import { StatsGenresComponent } from './components/stats-genres/stats-genres.component';
 
 @NgModule({
   imports: [CommonModule, BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, ReactiveFormsModule, FormsModule],
@@ -30,6 +34,10 @@ import { DEFAULT_TIMEOUT, DiscoverInterceptor } from './services/interceptor/dis
     SearchFiltersComponent,
     PlaylistComponent,
     SearchFiltersPrettyComponent,
+    StatsComponent,
+    RecommendComponent,
+    StatsTopArtistsComponent,
+    StatsGenresComponent,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: DiscoverInterceptor, multi: true },

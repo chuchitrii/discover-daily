@@ -11,7 +11,6 @@ export interface IGenreModel {
   tracks: ITrackModel[];
   artists: IArtistModel[];
   isSelected: boolean;
-  displayArtists: string;
   addArtist: (artist: IArtistWithTracksAndGenres) => void;
 }
 
@@ -40,23 +39,25 @@ export class GenreModel implements IGenreModel {
   name: string;
   tracks: ITrackModel[];
   artists: IArtistModel[];
-  displayArtists: string;
   isSelected: boolean;
 
-  constructor(name: string, artist: IArtistWithTracksAndGenres, tracks: TrackObjectFull[]) {
+  get tracksCount() {
+    return this.tracks.length;
+  }
+
+  get artistsNames() {
+    return this.artists.map((a) => a.name).join(', ');
+  }
+
+  constructor(name: string, artist: IArtistWithTracksAndGenres) {
     this.name = name;
     this.artists = [new ArtistModel(artist)];
-    this.displayArtists = artist.name;
-    this.tracks = tracks.map((track) => new TrackModel(track));
+    this.tracks = artist.tracks.map((track) => new TrackModel(track));
     this.isSelected = false;
   }
 
   addArtist(artist) {
     this.artists.push(new ArtistModel(artist));
-    this.displayArtists = this.artists
-      .map((a) => a.name)
-      .slice(0, 2)
-      .join(', ');
   }
 }
 
@@ -126,3 +127,11 @@ export class SetOfObjects extends Set {
     return obj1.id === obj2.id;
   }
 }
+
+export type TopArtistsTerms = 'short_term' | 'medium_term' | 'long_term';
+
+export type ITopArtists = {
+  [key in TopArtistsTerms]: ArtistObjectFull[];
+};
+
+export const topArtistsTerms: Array<TopArtistsTerms> = ['short_term', 'medium_term', 'long_term'];

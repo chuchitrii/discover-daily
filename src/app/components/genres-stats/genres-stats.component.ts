@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { GenreModel } from '../../models/discover.model';
 import { DiscoverService } from '../../services/discover/discover.service';
-import { DeviceService } from '../../services/device/device.service';
 
 @Component({
   selector: 'app-genres-stats',
@@ -13,7 +12,7 @@ export class GenresStatsComponent implements OnInit {
   @Input() genreList: GenreModel[];
   helpVisible = true;
 
-  constructor(public ds: DiscoverService, public device: DeviceService) {}
+  constructor(public ds: DiscoverService) {}
 
   ngOnInit() {}
 

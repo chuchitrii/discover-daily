@@ -39,7 +39,11 @@
             "style": "camelCase"
           }
         ],
-        "@typescript-eslint/naming-convention": "off"
+        "@typescript-eslint/naming-convention": "off",
+        "curly": [
+          "warn",
+          "multi"
+        ]
       }
     },
     {
@@ -49,7 +53,8 @@
       "extends": [
         "plugin:@angular-eslint/template/recommended"
       ],
-      "rules": {}
+      "rules": {
+      }
     }
   ]
 }

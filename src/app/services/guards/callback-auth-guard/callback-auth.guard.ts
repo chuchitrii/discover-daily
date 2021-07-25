@@ -26,7 +26,6 @@ export class CallbackAuthGuard implements CanActivate {
       localStorage.setItem('access_token', queryParams.get('access_token'));
       localStorage.setItem('expires_in', queryParams.get('expires_in'));
       localStorage.setItem('accessed_at', Date.now().toString(10));
-
       return this.router.createUrlTree(['']);
     }
 

@@ -3,17 +3,18 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Rout
 import { Observable } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { DiscoverService } from '../../discover/discover.service';
+import { UserService } from '../../user/user.service';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DiscoverAuthGuard implements CanActivate {
-  constructor(private auth: AuthService, private router: Router, private ds: DiscoverService) {}
+  constructor(private auth: AuthService, private router: Router, private user: UserService) {}
 
-  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | UrlTree {
     if (this.auth.isLoggedIn()) {
-      await this.ds.getUserProfile();
-      return true;
+      return this.user.init().pipe(map((user) => true));
     } else {
       return this.router.createUrlTree(['/login']);
     }
