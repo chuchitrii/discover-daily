@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@200;300;400;500;600;700;900&display=swap');
+
+$background-color: #FFFFFF;
+$card-body-color: lavender;
+$card-header-color: lavenderblush;
+$card-footer-color: lavender;
+$selected-color: #545E75;
+
+$header-title-size: 3rem;
+$header-title-color: #5F339D;
+
+$discover-card-radius: 0.8rem;
+$discover-card-margin: 0.8rem;
+$discover-card-border-width: 2px;
+$discover-card-border-color: #CCCCCC;
+
+$action-color: #1CFEBA;
+$action-color-hover: #00cfb4;
+$secondary-action-color: gray;
+$secondary-action-color-hover: gray;
+
+$button-border-radius: 0.8rem;
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+.main-container {
+  @apply flex flex-col w-full h-full justify-items-start items-center box-border p-4 pt-4 space-y-4
+}
+
+.card {
+  @apply rounded-lg w-full flex flex-col bg-white shadow-lg
+}
+
+.card__header {
+  @apply flex rounded-t-lg justify-between bg-gradient-to-r from-teal-300 to-teal-500
+}
+
+.card__header-title {
+  @apply text-2xl md:text-4xl font-discover font-black p-4
+}
+
+.card__header-buttons {
+  @apply flex font-discover items-center justify-end pr-4 space-x-2
+}
+
+.card__header-search {
+  @apply flex items-center p-4
+}
+
+.card__body {
+  @apply w-full px-2;
+}
+
+.list {
+  @apply flex;
+}
+
+.list__item {}
