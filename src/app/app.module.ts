@@ -16,9 +16,29 @@ import { StatsComponent } from './components/stats/stats.component';
 import { RecommendComponent } from './components/recommend/recommend.component';
 import { StatsTopArtistsComponent } from './components/stats-top-artists/stats-top-artists.component';
 import { StatsGenresComponent } from './components/stats-genres/stats-genres.component';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { discoverState } from './state/discover.reducer';
+import { environment } from '../environments/environment';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { DiscoverEffects } from './state/discover.effects';
 
 @NgModule({
-  imports: [CommonModule, BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, ReactiveFormsModule, FormsModule],
+  imports: [
+    CommonModule,
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule,
+    FormsModule,
+    StoreModule.forRoot({ discoverState }, {}),
+    EffectsModule.forRoot([DiscoverEffects]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production, // Restrict extension to log-only mode
+    }),
+  ],
   declarations: [
     AppComponent,
     LoginComponent,
