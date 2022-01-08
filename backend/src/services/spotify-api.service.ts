@@ -4,6 +4,7 @@ import { ErrorWithStatus } from '../models/error.model';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { SharedService } from './shared.service';
 import { cookieOptions } from '../models/cookie-options.model';
+import { CacheService } from './cache.service';
 
 interface SpotifyApiResponse<T = any> {
   headers: Record<string, string>;
@@ -13,6 +14,7 @@ interface SpotifyApiResponse<T = any> {
 type UnPromise<T extends Promise<any>> = T extends Promise<infer U> ? U : never;
 type UnResponse<T extends {body: any}> = T extends {body: infer U} ? U : never;
 type UnPage<T extends {items: any[]}> = T extends {items: (infer U)[]} ? U : never;
+
 @Service()
 export class SpotifyApiService extends SpotifyWebApi{
   private fastify: FastifyInstance = getInstanceByToken(FastifyInstanceToken);
@@ -21,10 +23,10 @@ export class SpotifyApiService extends SpotifyWebApi{
     super();
   }
 
-  public execAndHandle<FunctionType extends { (...p: any): any }>(request: FastifyRequest, reply: FastifyReply, func: FunctionType, ...args: Parameters<FunctionType>): ReturnType<FunctionType> {
+  public execAndHandle<FunctionType extends { (...p: any[]): any}>(func: FunctionType, request: FastifyRequest, reply: FastifyReply, ...args: Parameters<FunctionType>): ReturnType<FunctionType> {
     return func.bind(this, ...args)()
       .catch((error: SpotifyApiResponse) => {
-        return this.handleErrors(error, request, reply, func, ...args)
+        return this.handleErrors(error, func, request, reply, ...args)
       })
   }
 
@@ -34,15 +36,15 @@ export class SpotifyApiService extends SpotifyWebApi{
     func: FunctionType,
     ...args: Parameters<FunctionType>
   ): Promise<UnPage<UnResponse<UnPromise<ReturnType<FunctionType>>>>[]> {
-    const enrichedArgs = (Object.assign({ offset: 0, limit: 1 }, args[0])) as Parameters<FunctionType>;
-    return this.execAndHandle(request, reply, func, ...enrichedArgs)
+    const enrichedArgs = (Object.assign({ offset: 0, limit: 1 }, args[0]));
+    return this.execAndHandle(func, request, reply, ...enrichedArgs)
       .then(r => SpotifyApiService.getOffsetArray(r.body.total))
       .then(offsetArray => this.getPromisesArray(offsetArray, request, reply, func, ...args))
       .then(promisesArray => Promise.all(promisesArray))
       .then(arrayOfArrays => arrayOfArrays.reduce((acc, array) => acc.concat(array), []))
   }
 
-  private handleErrors<FunctionType extends (...p: any) => any>(error: SpotifyApiResponse, request: FastifyRequest, reply: FastifyReply, func: FunctionType, ...args: Parameters<FunctionType>): Promise<ReturnType<FunctionType>> {
+  private handleErrors<FunctionType extends (...p: any[]) => any>(error: SpotifyApiResponse, func: FunctionType, request: FastifyRequest, reply: FastifyReply, ...args: Parameters<FunctionType>): Promise<ReturnType<FunctionType>> {
     if (error.statusCode === 401) return this.handle401(error, func.bind(this, ...args), request, reply);
     if (error.statusCode === 429) return this.handle429(error, func.bind(this, ...args), request, reply);
     throw new ErrorWithStatus(error.statusCode, error.body.error?.message);
@@ -84,7 +86,7 @@ export class SpotifyApiService extends SpotifyWebApi{
   ) {
     return offsetArray.map((offsetItem) => {
       const enrichedArgs = (Object.assign({ offset: offsetItem, limit: 50 }, args[0])) as Parameters<FunctionType>;
-      return this.execAndHandle(request, reply, func, ...enrichedArgs).then(r => r.body.items)
+      return this.execAndHandle(func, request, reply, ...enrichedArgs).then(r => r.body.items)
     })
   }
 

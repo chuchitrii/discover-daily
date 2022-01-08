@@ -15,22 +15,18 @@ export class ApiController {
 
   constructor(private sharedService: SharedService, private spotify: SpotifyApiService) {
   }
-
   @Hook('preHandler')
-  preHandler(
-    request: FastifyRequest,
-    reply: FastifyReply,
-    next: any,
-  ) {
+  preHandler(request: FastifyRequest, reply: FastifyReply, next: any,) {
     if (!request.cookies[this.fastify.config.cookieName]) {
-      reply.redirect('/auth');
+      reply.redirect('/');
       return;
     }
     try {
-      const token = this.sharedService.decryptToken(request.cookies[this.fastify.config.cookieName]);
-      this.spotify.setAccessToken(token.access_token);
+      const { access_token, refresh_token } = this.sharedService.decryptToken(request.cookies[this.fastify.config.cookieName]);
+      request.token = {access_token, refresh_token}
+      this.spotify.setAccessToken(access_token);
     } catch (e) {
-      reply.redirect('/auth');
+      reply.redirect('/');
       return;
     }
     next();
@@ -39,13 +35,13 @@ export class ApiController {
   @GET('/429')
   async getHandler(request: FastifyRequest, reply: FastifyReply) {
     return Promise.all(Array.from({ length: 30 })
-      .map(() => this.spotify.execAndHandle(request, reply, this.spotify.getMe).then((r) => r.body))
+      .map(() => this.spotify.execAndHandle(this.spotify.getMe, request, reply).then((r) => r.body))
     );
   }
 
   @GET('/me')
   getMe(request: FastifyRequest, reply: FastifyReply) {
-    return this.spotify.execAndHandle(request, reply, this.spotify.getMe).then((r) => r.body);
+    return this.spotify.execAndHandle(this.spotify.getMe, request, reply).then((r) => r.body);
   }
 
   @GET('/top-artists-for-all-terms', {
@@ -54,10 +50,8 @@ export class ApiController {
   getTopArtistsForAllTerms(request: FastifyRequest, reply: FastifyReply): Promise<TopArtistsForAllTerms> {
     return Promise.all(
       topArtistTerms.map(
-        (time_range) => this.spotify.execAndHandle(request, reply, this.spotify.getMyTopArtists, { time_range })
-          .then((r) => {
-            return { [time_range]: r.body.items };
-          }),
+        (time_range) => this.spotify.execAndHandle(this.spotify.getMyTopArtists, request, reply, { time_range })
+          .then((r) => ({ [time_range]: r.body.items })),
       ),
     ).then((arrayOfResponses) => {
       return arrayOfResponses.reduce((acc: {[key in TopArtistsTerms]: Array<SpotifyApi.ArtistObjectFull>}, response) => acc = { ...acc, ...response }, {} as {[key in TopArtistsTerms]: Array<SpotifyApi.ArtistObjectFull>});

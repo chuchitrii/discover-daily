@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import dotenv from 'dotenv';
 import { fastify, FastifyInstance } from 'fastify';
 import fastifyCookie from 'fastify-cookie';
-import { fastifyOauth2, OAuth2Namespace } from 'fastify-oauth2';
+import { fastifyOauth2, OAuth2Namespace, OAuth2Token } from 'fastify-oauth2';
 import fastifyOAS from 'fastify-oas';
 import { bootstrap } from 'fastify-decorators';
 import { AuthController } from './controllers/auth.controller';
@@ -24,6 +24,7 @@ declare module 'fastify' {
   }
   interface FastifyRequest {
     fastify: FastifyInstance;
+    token: Pick<OAuth2Token, 'access_token' | 'refresh_token'>
   }
 }
 
@@ -50,7 +51,7 @@ app
   // @ts-ignore https://github.com/fastify/fastify-oauth2/issues/120
   .register(fastifyOauth2, {
     name: 'spotify',
-    scope: 'user-read-private user-library-modify user-library-read playlist-modify-public ugc-image-upload',
+    scope: 'user-read-private user-library-modify user-library-read user-top-read playlist-modify-public ugc-image-upload',
     credentials: {
       client: {
         id: process.env['CLIENT_ID'],
@@ -66,7 +67,7 @@ app
     routePrefix: '/swagger',
     exposeRoute: true,
     swagger: {
-      host: `${app.config.host}:${app.config.port}`,
+      host: `${app.config.host}`,
       info: {
         title: 'Discover Daily',
         description: 'Discover Daily',
