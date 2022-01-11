@@ -4,7 +4,6 @@ import { ErrorWithStatus } from '../models/error.model';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { SharedService } from './shared.service';
 import { cookieOptions } from '../models/cookie-options.model';
-import { CacheService } from './cache.service';
 
 interface SpotifyApiResponse<T = any> {
   headers: Record<string, string>;
@@ -36,7 +35,7 @@ export class SpotifyApiService extends SpotifyWebApi{
     func: FunctionType,
     ...args: Parameters<FunctionType>
   ): Promise<UnPage<UnResponse<UnPromise<ReturnType<FunctionType>>>>[]> {
-    const enrichedArgs = (Object.assign({ offset: 0, limit: 1 }, args[0]));
+    const enrichedArgs = [Object.assign({ offset: 0, limit: 1 }, args[0])] as Parameters<FunctionType>;
     return this.execAndHandle(func, request, reply, ...enrichedArgs)
       .then(r => SpotifyApiService.getOffsetArray(r.body.total))
       .then(offsetArray => this.getPromisesArray(offsetArray, request, reply, func, ...args))
@@ -85,7 +84,7 @@ export class SpotifyApiService extends SpotifyWebApi{
     ...args: Parameters<FunctionType>
   ) {
     return offsetArray.map((offsetItem) => {
-      const enrichedArgs = (Object.assign({ offset: offsetItem, limit: 50 }, args[0])) as Parameters<FunctionType>;
+      const enrichedArgs = [Object.assign({ offset: offsetItem, limit: 50 }, args[0])] as Parameters<FunctionType>;
       return this.execAndHandle(func, request, reply, ...enrichedArgs).then(r => r.body.items)
     })
   }

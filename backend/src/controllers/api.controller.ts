@@ -8,12 +8,17 @@ import {
   topArtistsForAllTermsResponseSchema, TopArtistsTerms,
   topArtistTerms,
 } from '../models/spotify.model';
+import { cache, CacheService, IDependencyProvider } from '../services/cache.service';
+
+const dependencyProvider: IDependencyProvider = {};
 
 @Controller('/api')
 export class ApiController {
   fastify: FastifyInstance = getInstanceByToken(FastifyInstanceToken);
 
-  constructor(private sharedService: SharedService, private spotify: SpotifyApiService) {
+  constructor(private sharedService: SharedService, private spotify: SpotifyApiService, private cacheService: CacheService) {
+    dependencyProvider.service = cacheService;
+    dependencyProvider.spotify = spotify;
   }
   @Hook('preHandler')
   preHandler(request: FastifyRequest, reply: FastifyReply, next: any,) {
@@ -33,6 +38,7 @@ export class ApiController {
   }
 
   @GET('/429')
+  @cache(dependencyProvider)
   async getHandler(request: FastifyRequest, reply: FastifyReply) {
     return Promise.all(Array.from({ length: 30 })
       .map(() => this.spotify.execAndHandle(this.spotify.getMe, request, reply).then((r) => r.body))
@@ -40,6 +46,7 @@ export class ApiController {
   }
 
   @GET('/me')
+  @cache(dependencyProvider)
   getMe(request: FastifyRequest, reply: FastifyReply) {
     return this.spotify.execAndHandle(this.spotify.getMe, request, reply).then((r) => r.body);
   }
@@ -47,6 +54,7 @@ export class ApiController {
   @GET('/top-artists-for-all-terms', {
     schema: { response: { 200: topArtistsForAllTermsResponseSchema } },
   })
+  @cache(dependencyProvider)
   getTopArtistsForAllTerms(request: FastifyRequest, reply: FastifyReply): Promise<TopArtistsForAllTerms> {
     return Promise.all(
       topArtistTerms.map(
@@ -59,11 +67,13 @@ export class ApiController {
   }
 
   @GET('/saved-tracks-all')
+  @cache(dependencyProvider)
   getAllSavedTracks(request: FastifyRequest, reply: FastifyReply) {
     return this.spotify.getAllItemsFromListOfUnknownLength(request, reply, this.spotify.getMySavedTracks)
   }
 
   @GET('/user-playlists-all')
+  @cache(dependencyProvider)
   getAllMyPlaylists(request: FastifyRequest, reply: FastifyReply) {
     return this.spotify.getAllItemsFromListOfUnknownLength(request, reply, this.spotify.getUserPlaylists)
   }
